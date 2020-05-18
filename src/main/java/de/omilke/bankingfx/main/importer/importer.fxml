@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="1200.0"
+            xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="de.omilke.bankingfx.main.importer.ImporterView">
+    <children>
+        <Accordion fx:id="accordion" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                   minHeight="-Infinity" minWidth="-Infinity" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                   AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <panes>
+                <TitledPane animated="false" text="Import">
+                    <content>
+                        <VBox>
+                            <children>
+                                <Button fx:id="importButton" mnemonicParsing="false" onAction="#performImport"
+                                        text="Import" VBox.vgrow="ALWAYS">
+                                    <graphic>
+                                        <FontAwesomeIconView glyphName="CHEVRON_CIRCLE_DOWN" size="1.5em"/>
+                                    </graphic>
+                                </Button>
+                                <TextArea fx:id="importTextArea" VBox.vgrow="ALWAYS">
+                                    <VBox.margin>
+                                        <Insets top="10.0"/>
+                                    </VBox.margin>
+                                </TextArea>
+                            </children>
+                        </VBox>
+                    </content>
+                </TitledPane>
+                <TitledPane animated="false" text="Entries">
+                    <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                            <children>
+                                <VBox layoutX="18.399999618530273" layoutY="10.399999618530273"
+                                      AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="8.0"
+                                      AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <children>
+                                        <Button fx:id="saveButton" mnemonicParsing="false" onAction="#saveEntries"
+                                                text="Save">
+                                            <graphic>
+                                                <FontAwesomeIconView glyphName="DOWNLOAD" size="1.5em"/>
+                                            </graphic>
+                                        </Button>
+                                        <TableView fx:id="entryTable" prefHeight="200.0" prefWidth="200.0"
+                                                   VBox.vgrow="ALWAYS">
+                                            <VBox.margin>
+                                                <Insets top="10.0"/>
+                                            </VBox.margin>
+                                        </TableView>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </AnchorPane>
+                    </content>
+                </TitledPane>
+            </panes>
+        </Accordion>
+    </children>
+</AnchorPane>

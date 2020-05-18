@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="info" strict="false" name="XMLConfig">
+
+    <Properties>
+        <Property name="pattern.primary" value="%d{yyyy-MM-dd HH:mm:ss} %-7p [%t] %-20c{1} %m %ex{15}%n"/>
+    </Properties>
+
+    <Filter type="ThresholdFilter" level="TRACE"/>
+
+    <Appenders>
+        <Console name="ConsoleAppender">
+            <PatternLayout pattern="${pattern.primary}"/>
+        </Console>
+
+        <File name="defaultFileAppender" fileName="./bankingfx.log">
+            <PatternLayout pattern="${pattern.primary}"/>
+        </File>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="org.jooq.Constants" level="warn"/>
+
+        <Root level="INFO">
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="defaultFileAppender" level="INFO"/>
+        </Root>
+    </Loggers>
+
+</Configuration>

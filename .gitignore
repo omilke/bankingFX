@@ -1,0 +1,16 @@
+#IDE
+.settings/
+.classpath
+.project
+
+.idea/*
+!.idea/runConfigurations/
+bankingFX.iml
+
+#build
+/target/
+dependency-reduced-pom.xml
+
+#hack
+bankingfx.data.mv.db
+bankingfx.log

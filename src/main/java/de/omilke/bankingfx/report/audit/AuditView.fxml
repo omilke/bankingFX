@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<GridPane hgap="15.0" prefWidth="300.0" vgap="5.0" xmlns="http://javafx.com/javafx/8.0.40"
+          xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.omilke.bankingfx.report.audit.AuditView">
+    <columnConstraints>
+        <ColumnConstraints minWidth="-Infinity"/>
+        <ColumnConstraints maxWidth="-Infinity" minWidth="-Infinity" prefWidth="125.0"/>
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0"/>
+        <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0"/>
+        <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0"/>
+        <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0"/>
+        <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0"/>
+        <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0"/>
+        <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0"/>
+        <RowConstraints fillHeight="false" minHeight="10.0" prefHeight="30.0"/>
+    </rowConstraints>
+    <children>
+        <DatePicker fx:id="datePicker" onAction="#loadBalance" showWeekNumbers="true" GridPane.columnIndex="1"/>
+        <TextField fx:id="actualBalance" maxWidth="-Infinity" onAction="#setDelta" prefWidth="100.0"
+                   GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+        <TextField fx:id="correction" maxWidth="-Infinity" onAction="#setDelta" prefWidth="100.0"
+                   GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+        <TextField fx:id="regularBalance" editable="false" focusTraversable="false" maxWidth="-Infinity"
+                   prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+        <TextField fx:id="savings" editable="false" focusTraversable="false" maxWidth="-Infinity" prefWidth="100.0"
+                   GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+        <TextField fx:id="delta" editable="false" focusTraversable="false" maxWidth="-Infinity" prefWidth="100.0"
+                   GridPane.columnIndex="1" GridPane.rowIndex="7"/>
+        <Label text="Audit Date" GridPane.halignment="RIGHT"/>
+        <Label text="Actual Balance" GridPane.halignment="RIGHT" GridPane.rowIndex="1"/>
+        <Label text="Correction" GridPane.halignment="RIGHT" GridPane.rowIndex="2"/>
+        <Label text="Regular Balance" GridPane.halignment="RIGHT" GridPane.rowIndex="4"/>
+        <Label text="Savings" GridPane.halignment="RIGHT" GridPane.rowIndex="5"/>
+        <Label text="Δ" GridPane.halignment="RIGHT" GridPane.rowIndex="7"/>
+    </children>
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+    </padding>
+</GridPane>

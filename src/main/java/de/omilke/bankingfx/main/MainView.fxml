@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.VBox?>
+<VBox fx:id="content" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
+      minWidth="-Infinity" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.60"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.omilke.bankingfx.main.MainView">
+    <children>
+
+        <!--        <MenuBar VBox.vgrow="NEVER">-->
+        <!--            <menus>-->
+        <!--                <Menu mnemonicParsing="false" text="_File">-->
+        <!--                    <items>-->
+        <!--                        <MenuItem mnemonicParsing="false" onAction="#showImport" text="Import">-->
+        <!--                            <graphic>-->
+        <!--                                <FontAwesomeIconView glyphName="DOWNLOAD" size="15"/>-->
+        <!--                            </graphic>-->
+        <!--                        </MenuItem>-->
+        <!--                        <MenuItem mnemonicParsing="false" onAction="#showConvert" text="Converter">-->
+        <!--                            <graphic>-->
+        <!--                                <FontAwesomeIconView glyphName="REPEAT" size="15"/>-->
+        <!--                            </graphic>-->
+        <!--                        </MenuItem>-->
+        <!--                    </items>-->
+        <!--                </Menu>-->
+        <!--                <Menu mnemonicParsing="true" text="_Reports">-->
+        <!--                    <items>-->
+        <!--                        <MenuItem mnemonicParsing="true" onAction="#showReports" text="Reports">-->
+        <!--                        </MenuItem>-->
+        <!--                        <MenuItem mnemonicParsing="true" onAction="#showCategories" text="Categories">-->
+        <!--                            <accelerator>-->
+        <!--                                <KeyCodeCombination code="C" alt="DOWN" control="DOWN" meta="UP" shift="UP"-->
+        <!--                                                    shortcut="UP"/>-->
+        <!--                            </accelerator>-->
+        <!--                        </MenuItem>-->
+        <!--                        <MenuItem mnemonicParsing="false" onAction="#showSavings" text="Savings">-->
+        <!--                            <accelerator>-->
+        <!--                                <KeyCodeCombination code="S" alt="DOWN" control="DOWN" meta="UP" shift="UP"-->
+        <!--                                                    shortcut="UP"/>-->
+        <!--                            </accelerator>-->
+        <!--                        </MenuItem>-->
+        <!--                        <MenuItem mnemonicParsing="false" onAction="#showBalance" text="Balance">-->
+        <!--                            <accelerator>-->
+        <!--                                <KeyCodeCombination code="B" alt="DOWN" control="DOWN" meta="UP" shift="UP"-->
+        <!--                                                    shortcut="UP"/>-->
+        <!--                            </accelerator>-->
+        <!--                        </MenuItem>-->
+        <!--                        <MenuItem mnemonicParsing="false" onAction="#showFortuneHistory" text="Fortune History">-->
+        <!--                            <accelerator>-->
+        <!--                                <KeyCodeCombination code="H" alt="DOWN" control="DOWN" meta="UP" shift="UP"-->
+        <!--                                                    shortcut="UP"/>-->
+        <!--                            </accelerator>-->
+        <!--                        </MenuItem>-->
+        <!--                        <MenuItem mnemonicParsing="false" onAction="#showAudit" text="Audit">-->
+        <!--                            <accelerator>-->
+        <!--                                <KeyCodeCombination code="A" alt="DOWN" control="DOWN" meta="UP" shift="UP"-->
+        <!--                                                    shortcut="UP"/>-->
+        <!--                            </accelerator>-->
+        <!--                        </MenuItem>-->
+        <!--                    </items>-->
+        <!--                    <graphic>-->
+        <!--                        <FontAwesomeIconView glyphName="BAR_CHART" size="15"/>-->
+        <!--                    </graphic>-->
+        <!--                </Menu>-->
+        <!--                <Menu mnemonicParsing="false" text="_Views">-->
+        <!--                    <graphic>-->
+        <!--                        <FontAwesomeIconView glyphName="PLUS_CIRCLE" size="15"/>-->
+        <!--                    </graphic>-->
+
+        <!--                    <MenuItem mnemonicParsing="true" onAction="#showMiscViews" text="Misc. Views">-->
+        <!--                    </MenuItem>-->
+
+
+        <!--                    <MenuItem mnemonicParsing="false" onAction="#showRecurringEntries" text="Recurring Entries">-->
+        <!--                        <graphic>-->
+        <!--                            <FontAwesomeIconView glyphName="REPEAT" size="15"/>-->
+        <!--                        </graphic>-->
+        <!--                    </MenuItem>-->
+        <!--                </Menu>-->
+        <!--            </menus>-->
+        <!--        </MenuBar>-->
+        <TabPane tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS" fx:id="mainTabPane">
+            <!--will be lazily populated-->
+        </TabPane>
+
+    </children>
+</VBox>

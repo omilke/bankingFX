@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.6.0.xsd">
+
+    <!--   taken from  https://www.jooq.org/doc/3.6/manual/code-generation/codegen-configuration/-->
+    <jdbc>
+        <driver>org.h2.Driver</driver>
+        <url>jdbc:h2:./target/bankingfx.h2</url>
+        <user>user</user>
+        <password>password</password>
+    </jdbc>
+
+    <generator>
+        <database>
+            <name>org.jooq.meta.h2.H2Database</name>
+            <includes>.*</includes>
+            <inputSchema>PUBLIC</inputSchema>
+        </database>
+
+        <target>
+            <directory>src/main/java</directory>
+            <packageName>de.omilke.banking.persistence.jooq.meta</packageName>
+        </target>
+    </generator>
+</configuration>

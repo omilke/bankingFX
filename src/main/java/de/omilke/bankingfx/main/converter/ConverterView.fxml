@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane minHeight="400.0" minWidth="-Infinity" prefWidth="1200.0" xmlns="http://javafx.com/javafx/10.0.2-internal"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.omilke.bankingfx.main.converter.ConverterView">
+    <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+          AnchorPane.topAnchor="0.0">
+        <HBox styleClass="top-control-bar">
+            <children>
+                <Button id="openButton" onAction="#actionOpenFileForConversion" text="Open File"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <CheckBox fx:id="postponeCheckBox" selected="true" text="postpone parsed entry date"/>
+                <Button id="saveToFileButton" onAction="#actionSaveToFile" text="Save to File">
+                    <graphic>
+                        <FontAwesomeIconView glyphName="FLOPPY_ALT" size="15"/>
+                    </graphic>
+                </Button>
+            </children>
+        </HBox>
+        <TableView fx:id="entryTable" VBox.vgrow="ALWAYS"/>
+        <HBox styleClass="bottom-status-bar">
+            <Label text="Entries:"/>
+            <Label fx:id="entryCounterLabel" textAlignment="JUSTIFY"/>
+        </HBox>
+    </VBox>
+</AnchorPane>

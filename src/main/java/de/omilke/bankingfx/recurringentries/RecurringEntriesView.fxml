@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<AnchorPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/10.0.2-internal"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="de.omilke.bankingfx.recurringentries.RecurringEntriesView">
+    <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+          AnchorPane.topAnchor="0.0">
+        <children>
+            <HBox styleClass="top-control-bar">
+                <children>
+                    <FontAwesomeIconView styleClass="filter-icon"/>
+                    <DatePicker fx:id="fromDate"/>
+                    <DatePicker fx:id="toDate" disable="true"/>
+                    <Button fx:id="generateButton" onAction="#regenerate" text="re-generate">
+                        <graphic>
+                            <FontAwesomeIconView glyphName="REFRESH" size="15"/>
+                        </graphic>
+                    </Button>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="saveButton" onAction="#saveToFile" text="Save to File" alignment="CENTER_RIGHT">
+                        <graphic>
+                            <FontAwesomeIconView glyphName="FLOPPY_ALT" size="15"/>
+                        </graphic>
+                    </Button>
+
+                </children>
+            </HBox>
+
+            <TableView fx:id="recurringEntryTable" VBox.vgrow="ALWAYS"/>
+            <TableView fx:id="entryTable" VBox.vgrow="ALWAYS"/>
+            <HBox styleClass="bottom-status-bar">
+                <children>
+                    <Label text="Generated Entries:"/>
+                    <Label fx:id="entryCountLabel"/>
+                </children>
+            </HBox>
+        </children>
+    </VBox>
+</AnchorPane>
