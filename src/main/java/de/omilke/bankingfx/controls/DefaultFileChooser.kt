@@ -1,5 +1,7 @@
 package de.omilke.bankingfx.controls
 
+import de.omilke.banking.BankingConfigurator
+import de.omilke.banking.ConfigurationConstants
 import javafx.stage.FileChooser
 import javafx.stage.Window
 import java.io.File
@@ -11,7 +13,10 @@ class DefaultFileChooser(initialFileName: String, private val window: Window, ti
 
     init {
         fileChooser.title = title
-        fileChooser.initialDirectory = File(DEFAULT_LOCATION)
+
+        if (DEFAULT_LOCATION != null) {
+            fileChooser.initialDirectory = File(DEFAULT_LOCATION)
+        }
 
         fileChooser.extensionFilters += extensionFilter
         fileChooser.selectedExtensionFilter = extensionFilter
@@ -29,6 +34,7 @@ class DefaultFileChooser(initialFileName: String, private val window: Window, ti
     }
 
     companion object {
-        private const val DEFAULT_LOCATION = "D:\\~dev\\share"
+
+        private val DEFAULT_LOCATION = BankingConfigurator.findPropertyConfiguration(ConfigurationConstants.IMPORT_DIALOG_PATH)
     }
 }
