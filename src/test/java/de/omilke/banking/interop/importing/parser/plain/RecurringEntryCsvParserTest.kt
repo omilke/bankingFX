@@ -34,7 +34,7 @@ internal class RecurringEntryCsvParserTest {
 
     private fun verify(result: Optional<RecurringEntry>, expected: RecurringEntry) {
 
-        assertThat(result.isPresent).isTrue
+        assertThat(result.isPresent).isTrue()
         assertThat(result.get()).isEqualTo(expected)
     }
 }
