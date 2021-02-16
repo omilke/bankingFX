@@ -2,6 +2,8 @@ package de.omilke.bankingfx.report.control
 
 import javafx.event.EventHandler
 import javafx.scene.chart.XYChart
+import javafx.scene.control.ContextMenu
+import javafx.scene.control.MenuItem
 import javafx.scene.input.MouseButton
 import javafx.scene.input.MouseEvent
 import java.math.BigDecimal
@@ -19,8 +21,11 @@ class ChartShowEntriesMouseEventHandler(private val data: XYChart.Data<String, B
 
         val period = resolveDate(data.xValue)
 
-        val actionHandler = ShowEntryPopoverHandler(period, data.node)
-        ShowEntryContextMenu(actionHandler)
+        val menuItem = MenuItem("Show Entries").apply {
+            onAction = ShowEntryPopoverHandler(period, data.node)
+        }
+
+        ContextMenu(menuItem)
     }
 
     override fun handle(event: MouseEvent) {

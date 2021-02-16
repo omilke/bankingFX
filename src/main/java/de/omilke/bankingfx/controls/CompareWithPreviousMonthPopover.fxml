@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
+
+    <children>
+        <TableView fx:id="entrypairTable" />
+        <HBox>
+            <HBox styleClass="bottom-status-bar" HBox.hgrow="ALWAYS">
+                <children>
+                    <Label text="Entries:" />
+                    <Label fx:id="entryCountLabelFirstMonth" />
+                    <Label text="Sum:" />
+                    <Label fx:id="entrySumLabelFirstMonth" />
+                </children>
+            </HBox>
+            <HBox styleClass="bottom-status-bar" HBox.hgrow="ALWAYS">
+                <children>
+                    <Label text="Entries:" />
+                    <Label fx:id="entryCountLabelSecondMonth" />
+                    <Label text="Sum:" />
+                    <Label fx:id="entrySumLabelSecondMonth" />
+                </children>
+            </HBox>
+        </HBox>
+    </children>
+</fx:root>
