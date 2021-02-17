@@ -1,3 +1,7 @@
+/*
+color palette from https://clrs.cc/a11y/ - (navy background)
+*/
+
 * {
     -fx-chart-default: #3D9970;
     -fx-chart-negative: #FF4136;
@@ -26,6 +30,12 @@
 .negative {
     -fx-text-fill: red;
 }
+
+.table-view .column-header .label,
+.tree-table-view .column-header .label {
+   -fx-text-fill: -fx-chart-font-color;
+}
+
 
 .tree-table-row-cell:selected, .table-row-cell:selected {
     -fx-background-color: LIGHTGRAY;
