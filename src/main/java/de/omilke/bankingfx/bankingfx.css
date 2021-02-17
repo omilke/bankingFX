@@ -3,6 +3,7 @@
     -fx-chart-negative: #FF4136;
     -fx-chart-font-color: #001F3F;
     -fx-chart-accent: #aaa;
+    -fx-positive-highlight: #b3c6b1;
 }
 
 
@@ -74,6 +75,32 @@
     -fx-tab-min-height: 30px;
     -fx-tab-max-height: 30px;
 }
+
+.comparison-table .matching-entry {
+     -fx-background-color: -fx-positive-highlight;
+ }
+
+ .comparison-table .positive {
+     -fx-text-fill: -fx-chart-default;
+ }
+
+ .comparison-table .negative {
+     -fx-text-fill: -fx-chart-negative;
+ }
+
+ .comparison-table .entry-difference {
+     -fx-font-style: italic;
+     -fx-font-weight: bold;
+ }
+
+ .comparison-table .cell {
+    -fx-text-fill: -fx-chart-font-color;
+ }
+
+ .bottom-status-bar .entry-difference {
+     -fx-font-style: italic;
+      -fx-font-weight: bold;
+ }
 
 .chart-title {
     -fx-text-fill: -fx-chart-font-color;

@@ -8,6 +8,7 @@ import de.omilke.banking.account.entity.RecurrenceStrategy;
 import de.omilke.banking.account.entity.StartOfMonthRecurrence;
 import de.omilke.bankingfx.UIConstants;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Cell;
 import javafx.scene.control.Labeled;
 import javafx.scene.paint.Color;
@@ -16,6 +17,7 @@ import javafx.scene.text.Text;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
+import java.util.function.Supplier;
 
 /**
  * Created by Olli on 25.05.2017.
@@ -57,6 +59,21 @@ public class UIUtils {
                 labeled.getStyleClass().add(UIConstants.NEGATIVE);
             }
         }
+    }
+
+    public static void applyStyleClass(Node styled, Supplier<Boolean> lazyCondition, String styleClass) {
+
+        applyStyleClass(styled, styled, false, lazyCondition, styleClass);
+    }
+
+    public static void applyStyleClass(Node styled, Object item, boolean empty, Supplier<Boolean> lazyCondition, String styleClass) {
+
+        if (empty || item == null || !lazyCondition.get()) {
+            styled.getStyleClass().remove(styleClass);
+        } else {
+            styled.getStyleClass().add(styleClass);
+        }
+
     }
 
     public static void formatDate(Cell<LocalDate> cell, LocalDate item, boolean empty) {

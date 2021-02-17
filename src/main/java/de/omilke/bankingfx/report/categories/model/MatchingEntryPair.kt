@@ -24,6 +24,24 @@ class MatchingEntryPair(val earlier: Entry?, val later: Entry?) : Comparable<Mat
         return earlier != null && later != null
     }
 
+    fun dayOfMonthDiffers(): Boolean {
+
+        return isMatch() &&
+                earlier!!.entryDate.dayOfMonth != later!!.entryDate.dayOfMonth
+    }
+
+    fun amountDiffers(): Boolean {
+
+        return isMatch() &&
+                earlier!!.amount.compareTo(later!!.amount) != 0
+    }
+
+    fun categoryDiffers(): Boolean {
+
+        return isMatch() &&
+                earlier!!.category.compareTo(later!!.category) != 0
+    }
+
     override fun compareTo(other: MatchingEntryPair): Int {
 
         val comparator = compareBy(this::extractDayOfEntry)

@@ -39,7 +39,6 @@ class CompareWithPreviousMonthPopover(month: YearMonth, category: String?) : Pop
     private val entryRepository = PersistenceServiceProvider.persistenceService.entryRepository
 
     init {
-        //TODO: styling (highlight differences / equality)
         loadFxml()
 
         val previousMonth = month.minusMonths(1)
@@ -192,6 +191,8 @@ class CompareWithPreviousMonthPopover(month: YearMonth, category: String?) : Pop
                     super.updateItem(item, empty)
 
                     UIUtils.formatAmount(this, item, empty)
+
+                    UIUtils.applyStyleClass(this, item, empty, tableRow.item::amountDiffers, "entry-difference")
                 }
             }
         }
@@ -209,6 +210,8 @@ class CompareWithPreviousMonthPopover(month: YearMonth, category: String?) : Pop
                     super.updateItem(item, empty)
 
                     UIUtils.formatDate(this, item, empty)
+
+                    UIUtils.applyStyleClass(this, item, empty, tableRow.item::dayOfMonthDiffers, "entry-difference")
                 }
             }
         }
@@ -233,6 +236,8 @@ class CompareWithPreviousMonthPopover(month: YearMonth, category: String?) : Pop
                     super.updateItem(item, empty)
 
                     UIUtils.formatDate(this, item, empty)
+
+                    UIUtils.applyStyleClass(this, item, empty, tableRow.item::dayOfMonthDiffers, "entry-difference")
                 }
             }
         }
@@ -250,6 +255,8 @@ class CompareWithPreviousMonthPopover(month: YearMonth, category: String?) : Pop
                     super.updateItem(item, empty)
 
                     UIUtils.formatAmount(this, item, empty)
+
+                    UIUtils.applyStyleClass(this, item, empty, tableRow.item::amountDiffers, "entry-difference")
                 }
             }
         }
@@ -264,13 +271,27 @@ class CompareWithPreviousMonthPopover(month: YearMonth, category: String?) : Pop
         entrypairTable.isFocusTraversable = false
     }
 
-    private fun setupLabels(entries: List<Entry>, entriesSecondMonth: List<Entry>) {
+    private fun setupLabels(entriesEarlierMonth: List<Entry>, entriesLaterMonth: List<Entry>) {
 
-        entryCountLabelFirstMonth.text = entries.size.toString()
-        entryCountLabelSecondMonth.text = entriesSecondMonth.size.toString()
+        val entryCountEarlierMonth = entriesEarlierMonth.size
+        val entrySumEarlierMonth = getEntrySum(entriesEarlierMonth)
 
-        UIUtils.formatAmount(entrySumLabelFirstMonth, getEntrySum(entries))
-        UIUtils.formatAmount(entrySumLabelSecondMonth, getEntrySum(entriesSecondMonth))
+        val entryCountLaterMonth = entriesLaterMonth.size
+        val entrySumLaterMonth = getEntrySum(entriesLaterMonth)
+
+        entryCountLabelFirstMonth.text = entryCountEarlierMonth.toString()
+        entryCountLabelSecondMonth.text = entryCountLaterMonth.toString()
+
+        UIUtils.formatAmount(entrySumLabelFirstMonth, entrySumEarlierMonth)
+        UIUtils.formatAmount(entrySumLabelSecondMonth, entrySumLaterMonth)
+
+        val entryCountDiffers = { entryCountEarlierMonth != entryCountLaterMonth }
+        UIUtils.applyStyleClass(entryCountLabelFirstMonth, entryCountDiffers, "entry-difference")
+        UIUtils.applyStyleClass(entryCountLabelSecondMonth, entryCountDiffers, "entry-difference")
+
+        val entrySumDiffers = { entrySumEarlierMonth != entrySumLaterMonth }
+        UIUtils.applyStyleClass(entrySumLabelFirstMonth, entrySumDiffers, "entry-difference")
+        UIUtils.applyStyleClass(entrySumLabelSecondMonth, entrySumDiffers, "entry-difference")
     }
 
     private fun getEntrySum(entries: List<Entry>): BigDecimal {
