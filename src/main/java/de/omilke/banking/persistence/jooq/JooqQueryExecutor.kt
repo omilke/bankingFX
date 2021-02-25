@@ -7,8 +7,8 @@ import de.omilke.banking.account.entity.RecurringEntry
 import de.omilke.banking.persistence.jooq.mapper.EntryMapper
 import de.omilke.banking.persistence.jooq.mapper.RecurringEntryMapper
 import de.omilke.banking.persistence.jooq.mapper.StrategyMapper
-import de.omilke.banking.persistence.jooq.meta.tables.Entry.ENTRY
-import de.omilke.banking.persistence.jooq.meta.tables.RecurringEntry.RECURRING_ENTRY
+import de.omilke.banking.persistence.jooq.meta.tables.Entry.Companion.ENTRY
+import de.omilke.banking.persistence.jooq.meta.tables.RecurringEntry.Companion.RECURRING_ENTRY
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import org.jooq.Condition
@@ -115,7 +115,7 @@ class JooqQueryExecutor(private val jooqContext: JooqContext) {
                 .map(RecurringEntryMapper)
     }
 
-    fun getSumsByMonthAndCategory(start: LocalDate?, end: LocalDate?): Result<Record5<String, Int, Int, BigDecimal, String>> {
+    fun getSumsByMonthAndCategory(start: LocalDate?, end: LocalDate?): Result<Record5<String?, Int?, Int?, BigDecimal, String>>? {
 
         val whereCondition = buildWhereCondition(start, end, null)
 
