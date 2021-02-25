@@ -22,9 +22,12 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
@@ -134,15 +137,15 @@ public class ConverterView implements FxmlView<ConverterModel> {
         fillTable(convertedEntries);
     }
 
-    private void fillTable(final List<de.omilke.banking.account.entity.Entry> convert) {
+    private void fillTable(final List<de.omilke.banking.account.entity.Entry> parsedEntries) {
 
-        final List<Entry> collect = convert
+        final List<Entry> entries = parsedEntries
                 .stream()
                 .map(Entry::new)
                 .collect(Collectors.toList());
 
         this.entryTable.getItems().clear();
-        this.entryTable.getItems().addAll(collect);
+        this.entryTable.getItems().addAll(entries);
     }
 
     private void setColumns(final List<String> categories) {
@@ -152,9 +155,7 @@ public class ConverterView implements FxmlView<ConverterModel> {
         dateColumn.getStyleClass().add(UIConstants.ALIGN_CENTER);
         dateColumn.setCellValueFactory(param -> param.getValue().entryDateProperty());
         dateColumn.setCellFactory(param -> new DateEditingCell<>(UIConstants.DATE_FORMATTER));
-        dateColumn.setOnEditCommit(e -> {
-            e.getTableView().getItems().get(e.getTablePosition().getRow()).setEntryDate(e.getNewValue());
-        });
+        dateColumn.setOnEditCommit(e -> e.getTableView().getItems().get(e.getTablePosition().getRow()).setEntryDate(e.getNewValue()));
 
         final TableColumn<Entry, EntryOrder> sequenceColumn = new TableColumn<>("");
         sequenceColumn.setPrefWidth(UIConstants.SEQUENCE_WIDTH);
@@ -193,9 +194,7 @@ public class ConverterView implements FxmlView<ConverterModel> {
                     final ContextMenu addMenu = createContextMenu(e -> {
 
                         Optional<EntryOrderSetting> entryOrderSetting = SequenceeditorView.openView(entryOrder.getSequence(), entryOrder.getOrderIndex());
-                        entryOrderSetting.ifPresent(p -> {
-                            entry.setEntryOrder(entryOrder.update(p.getEntrySequence(), p.getOrderIndex()));
-                        });
+                        entryOrderSetting.ifPresent(p -> entry.setEntryOrder(entryOrder.update(p.getEntrySequence(), p.getOrderIndex())));
                     });
 
                     setContextMenu(addMenu);
@@ -208,36 +207,28 @@ public class ConverterView implements FxmlView<ConverterModel> {
         amountColumn.getStyleClass().add(UIConstants.ALIGN_RIGHT);
         amountColumn.setCellValueFactory(param -> param.getValue().amountProperty());
         amountColumn.setCellFactory(column -> new AmountEditingCell<>(locale));
-        amountColumn.setOnEditCommit(e -> {
-            e.getTableView().getItems().get(e.getTablePosition().getRow()).setAmount(e.getNewValue());
-        });
+        amountColumn.setOnEditCommit(e -> e.getTableView().getItems().get(e.getTablePosition().getRow()).setAmount(e.getNewValue()));
 
         final TableColumn<Entry, Boolean> savingColumn = new TableColumn<>("Saving");
         savingColumn.setPrefWidth(UIConstants.SAVING_WIDTH);
         savingColumn.getStyleClass().add(UIConstants.ALIGN_CENTER);
         savingColumn.setCellValueFactory(param -> param.getValue().savingProperty());
         savingColumn.setCellFactory(param -> new SavingEditingCell<>());
-        savingColumn.setOnEditCommit(e -> {
-            e.getTableView().getItems().get(e.getTablePosition().getRow()).setSaving(e.getNewValue());
-        });
+        savingColumn.setOnEditCommit(e -> e.getTableView().getItems().get(e.getTablePosition().getRow()).setSaving(e.getNewValue()));
 
         final TableColumn<Entry, String> categoryColumn = new TableColumn<>("Category");
         categoryColumn.setPrefWidth(UIConstants.CATEGORY_WIDTH);
         categoryColumn.getStyleClass().add(UIConstants.ALIGN_LEFT);
         categoryColumn.setCellValueFactory(param -> param.getValue().categoryProperty());
         categoryColumn.setCellFactory(ComboBoxTableCell.forTableColumn(FXCollections.observableList(categories)));
-        categoryColumn.setOnEditCommit(e -> {
-            e.getTableView().getItems().get(e.getTablePosition().getRow()).setCategory(e.getNewValue());
-        });
+        categoryColumn.setOnEditCommit(e -> e.getTableView().getItems().get(e.getTablePosition().getRow()).setCategory(e.getNewValue()));
 
         final TableColumn<Entry, String> commentColumn = new TableColumn<>("Comment");
         commentColumn.setPrefWidth(UIConstants.COMMENT_IMPORT_WIDTH);
         commentColumn.getStyleClass().add(UIConstants.ALIGN_LEFT);
         commentColumn.setCellValueFactory(param -> param.getValue().commentProperty());
         commentColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-        commentColumn.setOnEditCommit(e -> {
-            e.getTableView().getItems().get(e.getTablePosition().getRow()).setComment(e.getNewValue());
-        });
+        commentColumn.setOnEditCommit(e -> e.getTableView().getItems().get(e.getTablePosition().getRow()).setComment(e.getNewValue()));
 
         TableColumn<Entry, Boolean> deleteColumn = new TableColumn<>("");
         deleteColumn.setPrefWidth(UIConstants.ACTION_IMPORT_WIDTH);
@@ -248,7 +239,7 @@ public class ConverterView implements FxmlView<ConverterModel> {
         deleteColumn.setCellValueFactory(features -> new SimpleBooleanProperty(features.getValue() != null));
 
         // getEntryRepository a cell value factory with an add button for each row in the table.
-        deleteColumn.setCellFactory(personBooleanTableColumn -> new DeleteButtonCell());
+        deleteColumn.setCellFactory(personBooleanTableColumn -> new ButtonBarCell());
 
         entryTable.getColumns().clear();
         entryTable.getColumns().add(dateColumn);
@@ -285,23 +276,36 @@ public class ConverterView implements FxmlView<ConverterModel> {
     /**
      * Displays a Delete button, that removes the line in which the button was activated.
      */
-    private class DeleteButtonCell extends TableCell<Entry, Boolean> {
+    private class ButtonBarCell extends TableCell<Entry, Boolean> {
+
+        HBox buttonBar = new HBox();
 
         // a button for adding a new person.
-        final Button addButton = new Button();
 
-        // pads and centers the add button in the cell.
-        final StackPane paddedButton = new StackPane();
 
-        DeleteButtonCell() {
+        ButtonBarCell() {
 
-            addButton.setGraphic(new FontAwesomeIconView(FontAwesomeIcon.TRASH, "1.25em"));
-            addButton.setContentDisplay(ContentDisplay.CENTER);
+            // pads and centers the add button in the cell.
+            buttonBar.setAlignment(Pos.BASELINE_CENTER);
+            //buttonBar.setSpacing(1.0);
 
+
+            buttonBar.getChildren().add(buildButton(FontAwesomeIcon.TRASH, this::deleteButtonPressed));
+            buttonBar.getChildren().add(buildButton(FontAwesomeIcon.COPY, this::splitButtonPressed));
+        }
+
+        private Node buildButton(FontAwesomeIcon icon, EventHandler<ActionEvent> onAction) {
+
+            final Button button = new Button();
+            button.setGraphic(new FontAwesomeIconView(icon, "1.25em"));
+            button.setContentDisplay(ContentDisplay.CENTER);
+            button.setOnAction(onAction);
+
+
+            final StackPane paddedButton = new StackPane(button);
             paddedButton.setPadding(new Insets(3));
-            paddedButton.getChildren().add(addButton);
 
-            addButton.setOnAction(this::buttonPressed);
+            return paddedButton;
         }
 
         @Override
@@ -312,16 +316,23 @@ public class ConverterView implements FxmlView<ConverterModel> {
             if (!empty) {
                 //places the button in the row only if the row is not empty.
                 setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-                setGraphic(paddedButton);
+                setGraphic(buttonBar);
             } else {
                 setGraphic(null);
             }
         }
 
-        private void buttonPressed(ActionEvent actionEvent) {
+        private void deleteButtonPressed(ActionEvent actionEvent) {
 
             getTableView().getItems().remove(getIndex());
         }
+
+        private void splitButtonPressed(ActionEvent actionEvent) {
+
+            new SplitEntryPopover(getTableView().getItems(), getTableRow().getItem()).show((Node) actionEvent.getSource());
+        }
+
+
     }
 
 }

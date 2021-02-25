@@ -8,8 +8,8 @@ color palette from https://clrs.cc/a11y/ - (navy background)
     -fx-chart-font-color: #001F3F;
     -fx-chart-accent: #aaa;
     -fx-positive-highlight: #b3c6b1;
+    -fx-warn: #FF851B;
 }
-
 
 .left {
     -fx-alignment: center-left;
@@ -24,11 +24,11 @@ color palette from https://clrs.cc/a11y/ - (navy background)
 }
 
 .positive {
-    -fx-text-fill: green;
+    -fx-text-fill: -fx-chart-default;
 }
 
 .negative {
-    -fx-text-fill: red;
+    -fx-text-fill: -fx-chart-negative;
 }
 
 .table-view .column-header .label,
@@ -65,14 +65,22 @@ color palette from https://clrs.cc/a11y/ - (navy background)
     -fx-text-fill: -fx-chart-font-color;
 }
 
+#splitEntryForm .negative,
+#splitEntryForm .negative .label,
 .popover .bottom-status-bar .negative {
 
     -fx-text-fill: -fx-chart-negative;
 }
-
+#splitEntryForm .positive,
+#splitEntryForm .positive .label,
 .popover .bottom-status-bar .positive {
-
     -fx-text-fill: -fx-chart-default;
+}
+
+#splitEntryForm .warn {
+    -glyph-name: "EXCLAMATION_TRIANGLE";
+    -glyph-size: 15;
+    -fx-fill: -fx-warn;
 }
 
 .tab-pane *.tab-header-area *.tab-header-background {

@@ -10,7 +10,7 @@ public class UIConstants {
     public static final double COMMENT_WIDTH = 400;
     public static final double COMMENT_COMPACT_WIDTH = 225;
     public static final double COMMENT_IMPORT_WIDTH = 475;
-    public static final double ACTION_IMPORT_WIDTH = 50;
+    public static final double ACTION_IMPORT_WIDTH = 100;
     public static final double DATE_WIDTH = 100;
     public static final double RECURRENCE_DATE_WIDTH = 150;
     public static final double RECURRENCE_WIDTH = 100;

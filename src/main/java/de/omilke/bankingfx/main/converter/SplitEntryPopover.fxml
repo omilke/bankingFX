@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import org.controlsfx.control.textfield.CustomTextField?>
+
+<fx:root fx:id="splitEntryForm" alignment="CENTER" type="VBox" xmlns="http://javafx.com/javafx/14"
+         xmlns:fx="http://javafx.com/fxml/1">
+    <GridPane hgap="5.0" vgap="5.0">
+        <columnConstraints>
+            <ColumnConstraints/>
+            <ColumnConstraints prefWidth="100.0"/>
+        </columnConstraints>
+        <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+        </padding>
+        <Label text="Entry comment" GridPane.columnIndex="0" GridPane.rowIndex="0"/>
+        <TextField fx:id="entryComment" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+        <Label text="Entry category" GridPane.columnIndex="0" GridPane.rowIndex="1"/>
+        <TextField fx:id="entryCategory" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+
+        <Label text="Entry date" GridPane.columnIndex="0" GridPane.rowIndex="2"/>
+        <TextField fx:id="entryDate" editable="false" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+
+        <Label text="Original amount" GridPane.columnIndex="0" GridPane.rowIndex="3"/>
+        <CustomTextField fx:id="entryAmount" editable="false" styleClass="right">
+            <GridPane.rowIndex>3</GridPane.rowIndex>
+            <GridPane.columnIndex>1</GridPane.columnIndex>
+            <right>
+                <Label text="€"/>
+            </right>
+        </CustomTextField>
+
+        <Label text="Amount to spearate" GridPane.columnIndex="0" GridPane.rowIndex="4"/>
+        <CustomTextField fx:id="definedAmount" styleClass="right">
+            <GridPane.rowIndex>4</GridPane.rowIndex>
+            <GridPane.columnIndex>1</GridPane.columnIndex>
+            <left>
+                <FontAwesomeIconView styleClass="warn"/>
+            </left>
+            <right>
+                <Label text="€">
+                </Label>
+            </right>
+        </CustomTextField>
+
+        <Label text="leftover amount" GridPane.columnIndex="0" GridPane.rowIndex="5"/>
+        <CustomTextField fx:id="leftoverAmount" editable="false" styleClass="right">
+            <GridPane.rowIndex>5</GridPane.rowIndex>
+            <GridPane.columnIndex>1</GridPane.columnIndex>
+            <left>
+                <FontAwesomeIconView styleClass="warn"/>
+            </left>
+            <right>
+                <Label text="€"/>
+            </right>
+        </CustomTextField>
+    </GridPane>
+    <HBox spacing="20.0">
+        <VBox.margin>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+        </VBox.margin>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button prefWidth="60.0" text="Cancel" onAction="#cancel"/>
+        <Button prefWidth="60.0" text="Split" fx:id="splitButton" onAction="#performSplit"/>
+    </HBox>
+</fx:root>
