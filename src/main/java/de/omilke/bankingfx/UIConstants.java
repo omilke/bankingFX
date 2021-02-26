@@ -30,4 +30,9 @@ public class UIConstants {
     public static final DateTimeFormatter MONTH_FORMATTER = DateTimeFormatter.ofPattern("MM / yyyy");
     public static final DateTimeFormatter MONTH_NAME_FORMATTER = DateTimeFormatter.ofPattern("MMMM yyyy");
     public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+
+    public static String getCssUri() {
+        return UIConstants.class.getClassLoader().getResource("compiled-css/bankingfx.css").toExternalForm();
+    }
+
 }

@@ -25,7 +25,7 @@ public class BankingFxApplication extends Application {
     public void start(final Stage stage) {
 
         final Scene scene = new Scene(FluentViewLoader.fxmlView(MainView.class).load().getView());
-        scene.getStylesheets().add(getClass().getResource("bankingfx.css").toExternalForm());
+        scene.getStylesheets().add(UIConstants.getCssUri());
 
         stage.setMaximized(true);
         stage.setTitle("Banking.fx");
@@ -34,5 +34,6 @@ public class BankingFxApplication extends Application {
 
         stage.show();
     }
+
 
 }

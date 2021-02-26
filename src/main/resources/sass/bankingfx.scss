@@ -1,0 +1,166 @@
+/*
+color palette from https://clrs.cc/a11y/ - (navy background)
+*/
+
+$positive: #3D9970;
+$negative: #FF4136;
+$positive-background: #b3c6b1;
+$chart-font-color: #001F3F;
+$chart-accent: #aaa;
+$warn: #FF851B;
+
+.left {
+  -fx-alignment: center-left;
+}
+
+.right {
+  -fx-alignment: center-right;
+}
+
+.center {
+  -fx-alignment: center;
+}
+
+.positive {
+  -fx-text-fill: $positive;
+}
+
+.negative {
+  -fx-text-fill: $negative;
+}
+
+.table-view .column-header .label,
+.tree-table-view .column-header .label {
+  -fx-text-fill: $chart-font-color;
+}
+
+.tree-table-row-cell:selected, .table-row-cell:selected {
+  -fx-background-color: LIGHTGRAY;
+  -fx-table-cell-border-color: LIGHTGRAY;
+}
+
+.top-control-bar {
+  -fx-padding: 15px;
+  -fx-spacing: 10px;
+  -fx-alignment: center-left;
+  -fx-fill-height: true;
+}
+
+.filter-icon {
+  -glyph-size: 20;
+  -glyph-name: FILTER;
+}
+
+.bottom-status-bar {
+  -fx-spacing: 10px;
+  -fx-alignment: center;
+  -fx-padding: 15px, 0, 15px, 0;
+}
+
+.popover .bottom-status-bar .label {
+
+  -fx-text-fill: $chart-font-color;
+}
+
+#splitEntryForm .negative .label {
+
+  -fx-text-fill: $negative;
+}
+
+#splitEntryForm .positive .label {
+  -fx-text-fill: $positive;
+}
+
+#splitEntryForm .warn {
+  -glyph-name: "EXCLAMATION_TRIANGLE";
+  -glyph-size: 15;
+  -fx-fill: $warn;
+}
+
+.tab-pane *.tab-header-area *.tab-header-background {
+  -fx-background-color: transparent;
+}
+
+.tab-pane {
+  -fx-tab-min-width: 150px;
+  -fx-tab-max-width: 150px;
+  -fx-tab-min-height: 30px;
+  -fx-tab-max-height: 30px;
+}
+
+.comparison-table {
+
+  .matching-entry {
+    -fx-background-color: $positive-background;
+  }
+
+  .cell {
+    -fx-text-fill: $chart-font-color;
+  }
+}
+
+.entry-difference {
+  -fx-font-style: italic;
+  -fx-font-weight: bold;
+}
+
+.chart-title {
+  -fx-text-fill: $chart-font-color;
+  -fx-font-size: 1.6em;
+  -fx-font-weight: bold
+}
+
+.chart-bar {
+  -fx-background-color: $positive;
+  -fx-border-color: $positive;
+}
+
+.chart-bar.negative {
+  -fx-background-color: $negative;
+  -fx-border-color: $negative;
+}
+
+.default-color0.chart-series-area-line {
+  -fx-stroke: $positive;
+}
+
+.default-color0.chart-series-area-fill {
+  -fx-fill: $positive;
+  -fx-opacity: 0.50;
+}
+
+.default-color0.chart-area-symbol {
+  -fx-background-color: $positive;
+  -fx-scale-x: 2;
+  -fx-scale-y: 2;
+}
+
+.chart-vertical-grid-lines {
+  -fx-stroke: transparent;
+}
+
+.chart-horizontal-grid-lines {
+  -fx-stroke: $chart-accent;
+  -fx-stroke-width: 1;
+  -fx-stroke-dash-array: 3;
+}
+
+.axis {
+  -fx-tick-label-fill: $chart-font-color;
+  -fx-tick-label-font-size: 12;
+  -fx-tick-length: 5;
+  -fx-minor-tick-length: 0;
+}
+
+.axis-label {
+  -fx-text-fill: $chart-font-color;
+  -fx-font-weight: bold
+}
+
+.chart-tooltip {
+  -fx-padding: 20px;
+  -fx-background-color: $chart-font-color;
+  -fx-opacity: 0.75;
+  -fx-font-size: 2em;
+  -fx-text-fill: #fff;
+}

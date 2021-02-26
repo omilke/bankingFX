@@ -1,7 +1,7 @@
 package de.omilke.bankingfx.main
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon
-import de.omilke.bankingfx.BankingFxApplication
+import de.omilke.bankingfx.UIConstants
 import de.omilke.bankingfx.controls.extensions.getAsIconView
 import de.omilke.bankingfx.controls.extensions.prepareLazilyLoadingTabs
 import de.omilke.bankingfx.controls.lazyloadtabs.ViewDescriptor
@@ -109,8 +109,7 @@ class MainView : FxmlView<MainModel?> {
 
         val scene = Scene(FluentViewLoader.fxmlView(clazz).load().view)
 
-        val uri = BankingFxApplication::class.java.getResource("bankingfx.css").toExternalForm()
-        scene.stylesheets.add(uri)
+        scene.stylesheets.add(UIConstants.getCssUri())
 
         val stage = Stage()
         stage.icons.add(ImageProvider.readImageFromMetaInf(ImageType.CHART))
