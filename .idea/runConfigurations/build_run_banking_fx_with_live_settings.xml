@@ -6,6 +6,7 @@
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/target" />
     <method v="2">
       <option name="Make" enabled="true" />
+      <option name="RunConfigurationTask" enabled="true" run_configuration_name="mvn sass compile" run_configuration_type="MavenRunConfiguration" />
     </method>
   </configuration>
 </component>
