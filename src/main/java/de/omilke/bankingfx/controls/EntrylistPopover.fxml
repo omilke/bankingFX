@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
-<fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/10.0.2-internal"
-         xmlns:fx="http://javafx.com/fxml/1">
+<?import javafx.scene.layout.*?>
+<fx:root type="javafx.scene.layout.VBox" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
 
     <children>
         <TableView fx:id="entryTable"/>
         <HBox styleClass="bottom-status-bar">
-            <children>
-                <Label text="Entries:"/>
-                <Label fx:id="entryCountLabel"/>
-                <Label text="Sum:"/>
-                <Label fx:id="entrySumLabel"/>
-                <Label text="Average"/>
-                <Label fx:id="entryAverageLabel"/>
-            </children>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label text="Entries:"/>
+            <Label fx:id="entryCountLabel"/>
+            <Label text="Sum:"/>
+            <Label fx:id="entrySumLabel"/>
+            <Label text="Average"/>
+            <Label fx:id="entryAverageLabel"/>
+            <HBox HBox.hgrow="ALWAYS" alignment="BASELINE_RIGHT">
+                <Button alignment="BASELINE_RIGHT" onAction="#export" text="Export..."/>
+            </HBox>
         </HBox>
     </children>
 </fx:root>

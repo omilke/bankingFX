@@ -1,6 +1,8 @@
 package de.omilke.bankingfx.controls
 
 import de.omilke.banking.account.entity.Entry
+import de.omilke.banking.interop.exporting.LinesWriter.saveLinesToFile
+import de.omilke.banking.interop.exporting.csv.CsvFormatter
 import de.omilke.banking.persistence.PersistenceServiceProvider
 import de.omilke.bankingfx.UIConstants
 import de.omilke.bankingfx.controls.extensions.atStartOfMonth
@@ -15,16 +17,19 @@ import javafx.scene.control.TableColumn
 import javafx.scene.control.TableView
 import javafx.scene.layout.Region
 import javafx.scene.layout.VBox
+import javafx.stage.FileChooser
 import javafx.util.Callback
 import org.controlsfx.control.PopOver
+import java.io.File
 import java.io.IOException
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.LocalDate
 import java.time.YearMonth
+import java.util.*
 
 
-class EntrylistPopover(first: YearMonth, last: YearMonth?, category: String?) : PopOver(VBox()) {
+class EntrylistPopover(private val first: YearMonth, private val last: YearMonth?, private val category: String?) : PopOver(VBox()) {
 
     @FXML
     private lateinit var entryTable: TableView<Entry>
@@ -41,14 +46,16 @@ class EntrylistPopover(first: YearMonth, last: YearMonth?, category: String?) : 
     private val entryRepository = PersistenceServiceProvider.persistenceService.entryRepository
 
     private val entries by lazy {
+
         entryRepository
-                .findAllEntriesBetweenWithCategoryName(
-                        first.atStartOfMonth(),
-                        (last ?: first).atEndOfMonth(),
-                        category)
-                .apply {
-                    sortBy { it.entryDate }
-                }
+            .findAllEntriesBetweenWithCategoryName(
+                first.atStartOfMonth(),
+                (last ?: first).atEndOfMonth(),
+                category
+            )
+            .apply {
+                sortBy { it.entryDate }
+            }
     }
 
     init {
@@ -109,6 +116,11 @@ class EntrylistPopover(first: YearMonth, last: YearMonth?, category: String?) : 
     private fun formatMonthColumnHeader(period: YearMonth): String {
 
         return period.format(UIConstants.MONTH_FORMATTER)
+    }
+
+    private fun formatMonthFileName(period: YearMonth): String {
+
+        return period.format(UIConstants.MONTH_NAME_FORMATTER_FILENAME)
     }
 
     private fun prepareEntryTable() {
@@ -181,9 +193,9 @@ class EntrylistPopover(first: YearMonth, last: YearMonth?, category: String?) : 
     private fun getEntrySum(entries: List<Entry>): BigDecimal {
 
         return entries
-                .stream()
-                .map(Entry::amount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
+            .stream()
+            .map(Entry::amount)
+            .reduce(BigDecimal.ZERO, BigDecimal::add)
     }
 
     private fun getEntryAverage(sumOfEntries: BigDecimal, entryCount: Int): BigDecimal? {
@@ -193,6 +205,52 @@ class EntrylistPopover(first: YearMonth, last: YearMonth?, category: String?) : 
         } else {
             BigDecimal.ZERO
         }
+    }
+
+    @FXML
+    fun export() {
+
+        val fileChooser = DefaultFileChooser(
+            generateInitialFileName(),
+            entryTable.scene.window,
+            "Select Save File",
+            FileChooser.ExtensionFilter("CSV files", "*.csv")
+        )
+
+        saveToSelectedFile(fileChooser.showSave())
+    }
+
+    private fun generateInitialFileName(): String {
+
+        var result = formatMonthFileName(first)
+
+        if (last != null)
+            result += "_${formatMonthFileName(last)}"
+
+        if (category != null) {
+            result += "_$category"
+        }
+
+        return result
+    }
+
+    private fun saveToSelectedFile(result: Optional<File>) {
+
+        if (result.isPresent) {
+            saveLinesToFile(result.get(), formatEntries(entryTable.items))
+        }
+    }
+
+    private fun formatEntries(entriesToExport: List<Entry>): List<String> {
+
+        val formatter = CsvFormatter()
+
+        val result: MutableList<String> = ArrayList()
+        for (currentEntry in entriesToExport) {
+            result.add(formatter.format(currentEntry))
+        }
+
+        return result
     }
 
 }
