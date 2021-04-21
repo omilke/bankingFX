@@ -14,7 +14,7 @@
     <properties>
         <mainClass>de.omilke.bankingfx.MainClass</mainClass>
         <java.version>15</java.version>
-        <javafx.version>15.0.1</javafx.version>
+        <javafx.version>16</javafx.version>
         <kotlin.version>1.4.31</kotlin.version>
         <kotlin.languageVersion>1.4</kotlin.languageVersion>
         <kotlin.apiVersion>1.4</kotlin.apiVersion>
