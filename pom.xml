@@ -138,6 +138,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-swing</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>de.saxsys</groupId>
             <artifactId>mvvmfx</artifactId>
             <version>1.8.0</version>

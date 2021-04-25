@@ -5,6 +5,7 @@ module de.omilke.bankingfx {
     requires javafx.fxml;
     requires javafx.controls;
     requires javafx.graphics;
+    requires javafx.swing;
     requires de.saxsys.mvvmfx;
     requires org.controlsfx.controls;
     requires de.jensd.fx.fontawesomefx.commons;
