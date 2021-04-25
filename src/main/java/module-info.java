@@ -18,6 +18,8 @@ module de.omilke.bankingfx {
     requires org.apache.commons.io;
     requires org.apache.logging.log4j;
     requires org.apache.logging.log4j.core;
+    requires YahooFinanceAPI;
+    requires transitive com.fasterxml.jackson.databind;
 
     exports de.omilke.bankingfx to javafx.graphics;
     exports de.omilke.banking.persistence.jooq.meta.tables.records to org.jooq;
