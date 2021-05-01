@@ -177,10 +177,10 @@ public class ConverterView implements FxmlView<ConverterModel> {
 
                     switch (item.getSequence()) {
                         case FIRST:
-                            icon = UIUtils.getIcon(FontAwesomeIcon.CHEVRON_CIRCLE_UP);
+                            icon = UIUtils.INSTANCE.getIcon(FontAwesomeIcon.CHEVRON_CIRCLE_UP);
                             break;
                         case LAST:
-                            icon = UIUtils.getIcon(FontAwesomeIcon.CHEVRON_CIRCLE_DOWN);
+                            icon = UIUtils.INSTANCE.getIcon(FontAwesomeIcon.CHEVRON_CIRCLE_DOWN);
                             break;
                         default:
                             icon = null;

@@ -104,6 +104,22 @@ $warn: #FF851B;
   -fx-font-weight: bold;
 }
 
+#transactionTable {
+
+  .tree-table-cell.description {
+    -fx-alignment: center-right;
+  }
+
+  .security-group .tree-table-cell {
+    //overwriting modena.css default with accent color at the bottom / top
+    -fx-border-color: derive($chart-accent, 75%) -fx-table-cell-border-color $chart-accent transparent;
+  }
+
+  .security-group .tree-table-cell.description {
+    -fx-alignment: center-left;
+  }
+}
+
 .chart-title {
   -fx-text-fill: $chart-font-color;
   -fx-font-size: 1.6em;

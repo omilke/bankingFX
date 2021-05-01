@@ -17,6 +17,8 @@ public class UIConstants {
     public static final double MONTH_WIDTH = 150;
     public static final double SAVING_WIDTH = 75;
     public static final double SEQUENCE_WIDTH = 50;
+    public static final double SECURITY_NAME_WIDTH = 350;
+    public static final double TRANSACTION_COUNT_WIDTH = 75;
 
     public static final String POSITIVE = "positive";
     public static final String NEGATIVE = "negative";

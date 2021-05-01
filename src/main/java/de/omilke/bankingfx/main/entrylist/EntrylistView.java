@@ -171,10 +171,10 @@ public class EntrylistView implements FxmlView<EntrylistModel> {
 
                     switch (item.getSequence()) {
                         case FIRST:
-                            icon = UIUtils.getIcon(FontAwesomeIcon.CHEVRON_CIRCLE_UP);
+                            icon = UIUtils.INSTANCE.getIcon(FontAwesomeIcon.CHEVRON_CIRCLE_UP);
                             break;
                         case LAST:
-                            icon = UIUtils.getIcon(FontAwesomeIcon.CHEVRON_CIRCLE_DOWN);
+                            icon = UIUtils.INSTANCE.getIcon(FontAwesomeIcon.CHEVRON_CIRCLE_DOWN);
                             break;
                         default:
                             icon = null;
@@ -210,9 +210,9 @@ public class EntrylistView implements FxmlView<EntrylistModel> {
                     final Node icon;
 
                     if (amount.compareTo(BigDecimal.ZERO) < 0) {
-                        icon = UIUtils.getIconWithColor(FontAwesomeIcon.DOWNLOAD, Color.GREEN);
+                        icon = UIUtils.INSTANCE.getIconWithColor(FontAwesomeIcon.DOWNLOAD, Color.GREEN);
                     } else {
-                        icon = UIUtils.getIconWithColor(FontAwesomeIcon.UPLOAD, Color.RED);
+                        icon = UIUtils.INSTANCE.getIconWithColor(FontAwesomeIcon.UPLOAD, Color.RED);
                     }
 
                     setGraphic(icon);

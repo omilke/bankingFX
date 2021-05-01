@@ -27,12 +27,14 @@ module de.omilke.bankingfx {
     opens de.omilke.bankingfx.main to de.saxsys.mvvmfx, javafx.fxml;
     opens de.omilke.bankingfx.main.entrylist to de.saxsys.mvvmfx, javafx.fxml;
     opens de.omilke.bankingfx.report to de.saxsys.mvvmfx, javafx.fxml;
+    opens de.omilke.bankingfx.stocks to de.saxsys.mvvmfx, javafx.fxml;
     opens de.omilke.bankingfx.misc to de.saxsys.mvvmfx, javafx.fxml;
     opens de.omilke.bankingfx.report.categories to de.saxsys.mvvmfx, javafx.fxml;
     opens de.omilke.bankingfx.report.savings to de.saxsys.mvvmfx, javafx.fxml;
     opens de.omilke.bankingfx.report.balance to de.saxsys.mvvmfx, javafx.fxml;
     opens de.omilke.bankingfx.report.fortunehistory to de.saxsys.mvvmfx, javafx.fxml;
     opens de.omilke.bankingfx.report.audit to de.saxsys.mvvmfx, javafx.fxml;
+    opens de.omilke.bankingfx.stocks.transactions to de.saxsys.mvvmfx, javafx.fxml;
     opens de.omilke.bankingfx.main.converter to de.saxsys.mvvmfx, javafx.fxml;
     opens de.omilke.bankingfx.recurringentries to de.saxsys.mvvmfx, javafx.fxml;
     opens de.omilke.bankingfx.controls to de.saxsys.mvvmfx, javafx.fxml;

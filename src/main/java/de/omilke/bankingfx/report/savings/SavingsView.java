@@ -125,9 +125,9 @@ public class SavingsView implements FxmlView<SavingsModel> {
                     final Text icon;
 
                     if (amount.compareTo(BigDecimal.ZERO) < 0) {
-                        icon = UIUtils.getIconWithColor(FontAwesomeIcon.DOWNLOAD, Color.GREEN);
+                        icon = UIUtils.INSTANCE.getIconWithColor(FontAwesomeIcon.DOWNLOAD, Color.GREEN);
                     } else {
-                        icon = UIUtils.getIconWithColor(FontAwesomeIcon.UPLOAD, Color.RED);
+                        icon = UIUtils.INSTANCE.getIconWithColor(FontAwesomeIcon.UPLOAD, Color.RED);
                     }
 
                     setGraphic(icon);

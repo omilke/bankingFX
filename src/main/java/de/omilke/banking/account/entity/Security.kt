@@ -29,7 +29,7 @@ data class Security(
                 .reduce(BigDecimal::add)
 
     val isClosedPosition
-        get() = totalCount == 0;
+        get() = totalCount == 0
 
     val totalCount
         get() = transactions
@@ -37,9 +37,14 @@ data class Security(
                 .map { if (it.type == TransactionType.SELL) -it.count else it.count }
                 .sum()
 
-    fun getCurrentValue(currentPrice: BigDecimal): BigDecimal {
+    var securityReturn: SecurityReturn? = null
 
-        return currentPrice.multiply(BigDecimal(totalCount))
+    fun updateCurrentPrice(currentPrice: BigDecimal): SecurityReturn {
+
+        val newReturn = SecurityReturn(this, currentPrice)
+        securityReturn = newReturn
+
+        return newReturn
     }
 
     override fun compareTo(other: Security): Int {

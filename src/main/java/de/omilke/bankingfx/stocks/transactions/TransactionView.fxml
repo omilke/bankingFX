@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TreeTableView?>
+<?import javafx.scene.layout.*?>
+<AnchorPane prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/10.0.2-internal"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.omilke.bankingfx.stocks.transactions.TransactionView">
+    <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+          AnchorPane.topAnchor="0.0">
+
+        <HBox styleClass="top-control-bar">
+            <Button text="Add Transaction" fx:id="btnAddTransaction"/>
+        </HBox>
+        <TreeTableView fx:id="transactionTable" VBox.vgrow="ALWAYS"/>
+    </VBox>
+</AnchorPane>

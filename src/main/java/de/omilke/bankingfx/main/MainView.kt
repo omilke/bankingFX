@@ -17,6 +17,7 @@ import de.omilke.bankingfx.report.fortunehistory.FortunehistoryView
 import de.omilke.bankingfx.report.savings.SavingsView
 import de.omilke.bankingfx.resources.ImageProvider
 import de.omilke.bankingfx.resources.ImageType
+import de.omilke.bankingfx.stocks.StocksView
 import de.saxsys.mvvmfx.FluentViewLoader
 import de.saxsys.mvvmfx.FxmlView
 import de.saxsys.mvvmfx.ViewModel
@@ -35,6 +36,7 @@ class MainView : FxmlView<MainModel?> {
 
             put("All Entries", ViewDescriptor("All Entries", EntrylistView::class.java, FontAwesomeIcon.LIST.getAsIconView()))
             put("Reports", ViewDescriptor("Reports", ReportsView::class.java, FontAwesomeIcon.BAR_CHART.getAsIconView()))
+            put("Stocks", ViewDescriptor("Stocks", StocksView::class.java, FontAwesomeIcon.LINE_CHART.getAsIconView()))
             put("Misc. Views", ViewDescriptor("Misc. Views", MiscView::class.java, FontAwesomeIcon.PLUS_CIRCLE.getAsIconView()))
         }
     }
