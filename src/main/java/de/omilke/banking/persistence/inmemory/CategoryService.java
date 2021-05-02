@@ -1,5 +1,5 @@
-//package de.omilke.banking.persistence.inmemory;
-//
+package de.omilke.banking.persistence.inmemory;
+
 //import de.omilke.banking.account.entity.Category;
 //
 //import java.util.HashMap;

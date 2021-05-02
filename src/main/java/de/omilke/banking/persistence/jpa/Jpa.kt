@@ -1,5 +1,5 @@
-//package de.omilke.banking.storage
-//
+package de.omilke.banking.persistence.jpa
+
 //import de.omilke.banking.BankingConfigurator
 //import de.omilke.banking.persistence.PersistenceProvider
 //import org.apache.logging.log4j.Level

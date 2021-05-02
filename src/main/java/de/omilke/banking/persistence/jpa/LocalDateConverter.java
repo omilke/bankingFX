@@ -1,5 +1,5 @@
-//package de.omilke.banking.persistence.jpa;
-//
+package de.omilke.banking.persistence.jpa;
+
 //import de.omilke.banking.account.entity.LocalDateIntegerConverter;
 //
 //import javax.persistence.AttributeConverter;

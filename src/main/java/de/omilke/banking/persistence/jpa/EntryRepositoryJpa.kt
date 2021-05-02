@@ -1,5 +1,5 @@
-//package de.omilke.banking.persistence.jpa
-//
+package de.omilke.banking.persistence.jpa
+
 //import de.omilke.banking.account.entity.Entry
 //import de.omilke.banking.account.entity.EntryRepository
 //import org.apache.logging.log4j.LogManager
