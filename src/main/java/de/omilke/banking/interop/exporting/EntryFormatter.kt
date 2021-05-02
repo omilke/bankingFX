@@ -1,14 +1,13 @@
-package de.omilke.banking.interop.exporting;
+package de.omilke.banking.interop.exporting
 
-import de.omilke.banking.account.entity.Entry;
+import de.omilke.banking.account.entity.Entry
 
-public interface EntryFormatter {
+interface EntryFormatter {
 
     /**
      * Provides a flat representation of the Entry.
      *
      * @param entry The entry to be formatted.
      */
-    String format(Entry entry);
-
+    fun format(entry: Entry): String
 }

@@ -12,12 +12,13 @@ import java.util.*
 
 class IngDibaCsvExportParser : EntryParser {
 
-    override fun extractEntry(line: String?): Optional<Entry> {
+    //TODO: replace optional with kotlin nullable type
+    override fun extractEntry(line: String): Optional<Entry> {
 
         LOGGER.trace("Parsing line: {}", line)
 
         when {
-            line == null || line.isEmpty() -> return skipInvalidLine(line)
+            line.isEmpty() -> return skipInvalidLine(line)
             else -> {
 
                 val split = line.split(';')

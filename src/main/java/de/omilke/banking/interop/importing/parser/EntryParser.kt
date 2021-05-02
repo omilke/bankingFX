@@ -1,35 +1,32 @@
-package de.omilke.banking.interop.importing.parser;
+package de.omilke.banking.interop.importing.parser
 
-import de.omilke.banking.account.entity.Entry;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import de.omilke.banking.account.entity.Entry
+import org.apache.logging.log4j.Level
+import org.apache.logging.log4j.LogManager
+import java.util.*
 
-import java.util.Optional;
-
-public interface EntryParser {
+interface EntryParser {
 
     /**
      * Returns the information parsed from the line.
      *
      * @param line The line containing entry information
-     * @return Returns the parsed Entry for the provided line. May be {@link Optional#empty()} if the
+     * @return Returns the parsed Entry for the provided line. May be [Optional.empty] if the
      * line is somehow illegal.
      */
-    Optional<Entry> extractEntry(String line);
+    fun extractEntry(line: String): Optional<Entry>
 
     /**
-     * Logs a message and returns <code>{@link Optional#empty()}</code> according the contract of {@link #extractEntry(String)}.
+     * Logs a message and returns `[Optional.empty]` according the contract of [.extractEntry].
      *
      * @param line The invalid line.
-     * @return <code>{@link Optional#empty()}</code> because this line is invalid.
+     * @return `[Optional.empty]` because this line is invalid.
      */
-    default Optional<Entry> skipInvalidLine(String line) {
+    fun skipInvalidLine(line: String): Optional<Entry> {
 
-        Logger logger = LogManager.getLogger(this.getClass());
-        logger.log(Level.WARN, "Line could not be parsed successfully: {}", line);
+        val logger = LogManager.getLogger(this.javaClass)
+        logger.log(Level.WARN, "Line could not be parsed successfully: {}", line)
 
-        return Optional.empty();
+        return Optional.empty()
     }
-
 }
