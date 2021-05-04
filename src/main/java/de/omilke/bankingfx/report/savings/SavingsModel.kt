@@ -21,16 +21,15 @@ class SavingsModel : ViewModel {
 
         for (current in er.findAllEntries()) {
             if (current.isSaving) {
-                val category = getFromProperty(current.category)
+                val category = findCategoryByName(current.category)
                 category.addEntry(Entry(current))
             }
         }
 
-        //TODO: replace with kotlin comparator or even Comparable<Category>
-        categories.sortWith(Comparator.comparing { obj: Category -> obj.sum }.thenComparing { obj: Category -> obj.lowerCaseName })
+        categories.sort()
     }
 
-    private fun getFromProperty(name: String): Category {
+    private fun findCategoryByName(name: String): Category {
 
         for (category in categories) {
 

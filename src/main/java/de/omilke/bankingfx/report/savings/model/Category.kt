@@ -3,14 +3,14 @@ package de.omilke.bankingfx.report.savings.model
 import java.math.BigDecimal
 import java.util.*
 
-class Category(val name: String) {
+class Category(val name: String) : Comparable<Category> {
 
     private var _sum = BigDecimal.ZERO
 
     val sum: BigDecimal
         get() = _sum
 
-    val entries: SortedSet<Entry> = TreeSet(ENTRY_COMPARATOR)
+    val entries: SortedSet<Entry> = TreeSet(SavingEntryComparator())
 
     fun addEntry(entry: Entry) {
 
@@ -21,16 +21,14 @@ class Category(val name: String) {
     /**
      * Provides the lowercase name for building a case-insensitive comparator.
      */
-    val lowerCaseName: String
+    private val lowerCaseName: String
         get() = name.toLowerCase()
 
-    companion object {
-
-        //TODO: replace with kotlin comparators?
-        private val ENTRY_COMPARATOR =
-                Comparator
-                .comparing { obj: Entry -> obj.getEntryDate() }.reversed()
-                .thenComparing { obj: Entry -> obj.getAmount() }
-                .thenComparing { obj: Entry -> obj.getComment() }
+    override fun compareTo(other: Category): Int {
+        return compareValuesBy(
+                this,
+                other,
+                compareBy(Category::sum).thenComparing(Category::lowerCaseName),
+                { it })
     }
 }
