@@ -1,338 +1,309 @@
-package de.omilke.bankingfx.main.converter;
+package de.omilke.bankingfx.main.converter
 
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
-import de.omilke.banking.BankingConfigurator;
-import de.omilke.banking.account.EntryService;
-import de.omilke.banking.interop.exporting.LinesWriter;
-import de.omilke.banking.interop.exporting.jhaushalt.JHaushaltFormatter;
-import de.omilke.banking.interop.importing.parser.ingdiba.IngDibaCsvExportConverter;
-import de.omilke.bankingfx.UIConstants;
-import de.omilke.bankingfx.controls.*;
-import de.omilke.bankingfx.main.entrylist.model.Entry;
-import de.omilke.bankingfx.main.entrylist.model.EntryOrder;
-import de.omilke.bankingfx.main.sequenceeditor.SequenceeditorView;
-import de.omilke.bankingfx.main.sequenceeditor.model.EntryOrderSetting;
-import de.saxsys.mvvmfx.FxmlView;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.ComboBoxTableCell;
-import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.text.Text;
-import javafx.stage.FileChooser;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView
+import de.omilke.banking.BankingConfigurator.configuredLocale
+import de.omilke.banking.account.EntryService
+import de.omilke.banking.account.entity.EntrySequence
+import de.omilke.banking.interop.exporting.LinesWriter.saveLinesToFile
+import de.omilke.banking.interop.exporting.jhaushalt.JHaushaltFormatter
+import de.omilke.banking.interop.importing.parser.ingdiba.IngDibaCsvExportConverter
+import de.omilke.bankingfx.UIConstants
+import de.omilke.bankingfx.controls.AmountEditingCell
+import de.omilke.bankingfx.controls.DateEditingCell
+import de.omilke.bankingfx.controls.DefaultFileChooser
+import de.omilke.bankingfx.controls.SavingEditingCell
+import de.omilke.bankingfx.controls.UIUtils.getIcon
+import de.omilke.bankingfx.main.entrylist.model.EntryTableRow
+import de.omilke.bankingfx.main.entrylist.model.EntryOrder
+import de.omilke.bankingfx.main.sequenceeditor.SequenceeditorView
+import de.omilke.bankingfx.main.sequenceeditor.model.EntryOrderSetting
+import de.saxsys.mvvmfx.FxmlView
+import javafx.beans.binding.Bindings
+import javafx.beans.property.SimpleBooleanProperty
+import javafx.collections.FXCollections
+import javafx.collections.ListChangeListener
+import javafx.collections.ObservableList
+import javafx.event.ActionEvent
+import javafx.event.EventHandler
+import javafx.fxml.FXML
+import javafx.geometry.Insets
+import javafx.geometry.Pos
+import javafx.scene.Node
+import javafx.scene.control.*
+import javafx.scene.control.cell.ComboBoxTableCell
+import javafx.scene.control.cell.TextFieldTableCell
+import javafx.scene.layout.HBox
+import javafx.scene.layout.StackPane
+import javafx.stage.FileChooser
+import org.apache.logging.log4j.Level
+import org.apache.logging.log4j.LogManager
+import java.io.File
+import java.io.IOException
+import java.math.BigDecimal
+import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.time.LocalDate
+import java.util.*
+import de.omilke.banking.account.entity.Entry as domainEntry
 
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
-import java.util.stream.Collectors;
+class ConverterView : FxmlView<ConverterModel> {
 
-public class ConverterView implements FxmlView<ConverterModel> {
+    private val es = EntryService
 
-    private EntryService es = EntryService.INSTANCE;
-
-    private Locale locale = BankingConfigurator.INSTANCE.configuredLocale();
-
-    @FXML
-    CheckBox postponeCheckBox;
+    private val locale = configuredLocale()
 
     @FXML
-    Label entryCounterLabel;
+    lateinit var postponeCheckBox: CheckBox
 
     @FXML
-    TableView<Entry> entryTable;
+    lateinit var entryCounterLabel: Label
 
-    public void initialize() {
+    @FXML
+    lateinit var entryTable: TableView<EntryTableRow>
 
-        final List<String> categories = this.es.getAllCategories();
-        this.setColumns(categories);
+    fun initialize() {
 
-        this.entryTable.getItems().addListener(this::onItemsChanged);
+        val categories = es.getAllCategories()
+        setColumns(categories)
+
+        entryCounterLabel.textProperty().bind(Bindings.size(entryTable.items).asString())
     }
 
     @FXML
-    public void actionSaveToFile() {
+    fun actionSaveToFile() {
 
-        DefaultFileChooser fileChooser = new DefaultFileChooser("converted.csv", entryTable.getScene().getWindow(), "Select Save File", new FileChooser.ExtensionFilter("CSV files", "*.csv"));
+        val fileChooser = DefaultFileChooser(
+                "converted.csv",
+                entryTable.scene.window,
+                "Select Save File",
+                FileChooser.ExtensionFilter("CSV files", "*.csv"))
 
-        saveToSelectedFile(fileChooser.showSave());
+        saveToSelectedFile(fileChooser.showSave())
     }
 
-    private void saveToSelectedFile(Optional<File> result) {
+    private fun saveToSelectedFile(result: File?) {
 
-        if (result.isPresent()) {
-
-            LinesWriter.INSTANCE.saveLinesToFile(result.get(), formatEntries(entryTable.getItems()));
+        result?.let {
+            saveLinesToFile(it, formatEntries(entryTable.items))
         }
     }
 
-    private List<String> formatEntries(List<Entry> entriesToExport) {
+    private fun formatEntries(entriesToExport: List<EntryTableRow>): List<String> {
 
         //TODO: supply dictionary for comment -> category to ease import in JHaushalt
-        JHaushaltFormatter formatter = new JHaushaltFormatter(false);
+        val formatter = JHaushaltFormatter(false)
 
-        List<String> result = new ArrayList<>();
-        for (Entry currentEntry : entriesToExport) {
+        val result: MutableList<String> = ArrayList()
+        for (currentEntry in entriesToExport) {
 
-            final LocalDate entryDate;
-            if (postponeCheckBox.isSelected()) {
-                entryDate = currentEntry.getEntryDate().plusYears(1);
-            } else {
-                entryDate = currentEntry.getEntryDate();
+            val entryDate: LocalDate = when {
+                postponeCheckBox.isSelected -> currentEntry.getEntryDate().plusYears(1)
+                else -> currentEntry.getEntryDate()
             }
 
-            result.add(formatter.format(entryDate, currentEntry.getAmount(), currentEntry.getComment(), currentEntry.getCategory()));
+            result.add(formatter.format(entryDate, currentEntry.getAmount()!!, currentEntry.getComment(), currentEntry.getCategory()))
         }
 
-        return result;
+        return result
     }
 
     @FXML
-    public void actionOpenFileForConversion() {
+    fun actionOpenFileForConversion() {
 
-        DefaultFileChooser fileChooser = new DefaultFileChooser("", entryTable.getScene().getWindow(), "Select File For Conversion", new FileChooser.ExtensionFilter("all file types (*.*)", "*.*"));
-        convertSelectedFile(fileChooser.showOpen());
+        val fileChooser = DefaultFileChooser(
+                "",
+                entryTable.scene.window,
+                "Select File For Conversion",
+                FileChooser.ExtensionFilter("all file types (*.*)", "*.*"))
+
+        convertSelectedFile(fileChooser.showOpen())
     }
 
-    private void convertSelectedFile(Optional<File> selectedFile) {
+    private fun convertSelectedFile(selectedFile: File?) {
 
-        if (selectedFile.isPresent()) {
-            Path path = selectedFile.get().toPath();
+        selectedFile?.let {
+
+            val path = it.toPath()
 
             try {
-                List<String> lines = Files.readAllLines(path, StandardCharsets.ISO_8859_1);
+                val lines = Files.readAllLines(path, StandardCharsets.ISO_8859_1)
 
-                this.performConversion(lines);
-            } catch (IOException e) {
-                Logger logger = LogManager.getLogger(this.getClass());
-                logger.log(Level.WARN, "File could not be read with ANSI encoding: {}", path.toString(), e);
+                performConversion(lines)
+            } catch (e: IOException) {
+                val logger = LogManager.getLogger(this.javaClass)
+                logger.log(Level.WARN, "File could not be read with ANSI encoding: {}", path.toString(), e)
             }
         }
     }
 
-    private void performConversion(List<String> lines) {
+    private fun performConversion(lines: List<String>) {
 
-        List<de.omilke.banking.account.entity.Entry> convertedEntries = new IngDibaCsvExportConverter().convert(lines);
-        fillTable(convertedEntries);
+        val convertedEntries = IngDibaCsvExportConverter().convert(lines)
+        fillTable(convertedEntries)
     }
 
-    private void fillTable(final List<de.omilke.banking.account.entity.Entry> parsedEntries) {
+    private fun fillTable(parsedEntries: List<domainEntry>) {
 
-        final List<Entry> entries = parsedEntries
-                .stream()
-                .map(Entry::new)
-                .collect(Collectors.toList());
+        val entries: List<EntryTableRow> = parsedEntries
+                .map(::EntryTableRow)
 
-        this.entryTable.getItems().clear();
-        this.entryTable.getItems().addAll(entries);
+        entryTable.items.clear()
+        entryTable.items.addAll(entries)
     }
 
-    private void setColumns(final List<String> categories) {
+    private fun setColumns(categories: List<String>) {
 
-        final TableColumn<Entry, LocalDate> dateColumn = new TableColumn<>("Date");
-        dateColumn.setPrefWidth(UIConstants.MONTH_WIDTH);
-        dateColumn.getStyleClass().add(UIConstants.ALIGN_CENTER);
-        dateColumn.setCellValueFactory(param -> param.getValue().entryDateProperty());
-        dateColumn.setCellFactory(param -> new DateEditingCell<>(UIConstants.DATE_FORMATTER));
-        dateColumn.setOnEditCommit(e -> e.getTableView().getItems().get(e.getTablePosition().getRow()).setEntryDate(e.getNewValue()));
+        val dateColumn = TableColumn<EntryTableRow, LocalDate>("Date")
+        dateColumn.prefWidth = UIConstants.MONTH_WIDTH
+        dateColumn.styleClass.add(UIConstants.ALIGN_CENTER)
+        dateColumn.setCellValueFactory { param -> param.value.entryDateProperty() }
+        dateColumn.setCellFactory { DateEditingCell(UIConstants.DATE_FORMATTER) }
+        dateColumn.setOnEditCommit { e: TableColumn.CellEditEvent<EntryTableRow?, LocalDate> -> e.tableView.items[e.tablePosition.row]!!.setEntryDate(e.newValue) }
 
-        final TableColumn<Entry, EntryOrder> sequenceColumn = new TableColumn<>("");
-        sequenceColumn.setPrefWidth(UIConstants.SEQUENCE_WIDTH);
-        sequenceColumn.getStyleClass().add(UIConstants.ALIGN_CENTER);
-        sequenceColumn.setCellValueFactory(param -> param.getValue().entryOrderProperty());
-        sequenceColumn.setCellFactory(param -> new TableCell<>() {
+        val sequenceColumn = TableColumn<EntryTableRow, EntryOrder>("")
+        sequenceColumn.prefWidth = UIConstants.SEQUENCE_WIDTH
+        sequenceColumn.styleClass.add(UIConstants.ALIGN_CENTER)
+        sequenceColumn.setCellValueFactory { param -> param.value.entryOrderProperty() }
+        sequenceColumn.setCellFactory {
+            object : TableCell<EntryTableRow, EntryOrder?>() {
+                override fun updateItem(item: EntryOrder?, empty: Boolean) {
 
-            @Override
-            protected void updateItem(final EntryOrder item, final boolean empty) {
+                    super.updateItem(item, empty)
 
-                super.updateItem(item, empty);
+                    val rowItem = tableRow.item
+                    if (empty || item == null || rowItem == null) {
+                        graphic = null
+                    } else {
+                        graphic = when (item.sequence) {
+                            EntrySequence.FIRST -> getIcon(FontAwesomeIcon.CHEVRON_CIRCLE_UP)
+                            EntrySequence.LAST -> getIcon(FontAwesomeIcon.CHEVRON_CIRCLE_DOWN)
+                            else -> null
+                        }
 
-                final Entry entry = getTableRow().getItem();
+                        val entryOrder = rowItem.getEntryOrder()
 
-                if (item == null || empty || entry == null) {
-                    setGraphic(null);
-                } else {
-                    final Text icon;
+                        val addMenu = createContextMenu {
+                            val entryOrderSetting: Optional<EntryOrderSetting> = SequenceeditorView.openView(entryOrder?.sequence, entryOrder?.orderIndex!!)
+                            entryOrderSetting.ifPresent { p: EntryOrderSetting -> rowItem.setEntryOrder(entryOrder.update(p.entrySequence, p.orderIndex)) }
+                        }
 
-                    switch (item.getSequence()) {
-                        case FIRST:
-                            icon = UIUtils.INSTANCE.getIcon(FontAwesomeIcon.CHEVRON_CIRCLE_UP);
-                            break;
-                        case LAST:
-                            icon = UIUtils.INSTANCE.getIcon(FontAwesomeIcon.CHEVRON_CIRCLE_DOWN);
-                            break;
-                        default:
-                            icon = null;
-                            break;
+                        contextMenu = addMenu
                     }
-
-                    setGraphic(icon);
-
-                    final EntryOrder entryOrder = entry.getEntryOrder();
-
-                    final ContextMenu addMenu = createContextMenu(e -> {
-
-                        Optional<EntryOrderSetting> entryOrderSetting = SequenceeditorView.openView(entryOrder.getSequence(), entryOrder.getOrderIndex());
-                        entryOrderSetting.ifPresent(p -> entry.setEntryOrder(entryOrder.update(p.getEntrySequence(), p.getOrderIndex())));
-                    });
-
-                    setContextMenu(addMenu);
                 }
             }
-        });
+        }
 
-        final TableColumn<Entry, BigDecimal> amountColumn = new TableColumn<>("Amount");
-        amountColumn.setPrefWidth(UIConstants.AMOUNT_WIDTH);
-        amountColumn.getStyleClass().add(UIConstants.ALIGN_RIGHT);
-        amountColumn.setCellValueFactory(param -> param.getValue().amountProperty());
-        amountColumn.setCellFactory(column -> new AmountEditingCell<>(locale));
-        amountColumn.setOnEditCommit(e -> e.getTableView().getItems().get(e.getTablePosition().getRow()).setAmount(e.getNewValue()));
+        val amountColumn = TableColumn<EntryTableRow, BigDecimal>("Amount")
+        amountColumn.prefWidth = UIConstants.AMOUNT_WIDTH
+        amountColumn.styleClass.add(UIConstants.ALIGN_RIGHT)
+        amountColumn.setCellValueFactory { param -> param.value.amountProperty() }
+        amountColumn.setCellFactory { AmountEditingCell(locale) }
+        amountColumn.setOnEditCommit { e: TableColumn.CellEditEvent<EntryTableRow, BigDecimal> -> e.tableView.items[e.tablePosition.row]!!.setAmount(e.newValue) }
 
-        final TableColumn<Entry, Boolean> savingColumn = new TableColumn<>("Saving");
-        savingColumn.setPrefWidth(UIConstants.SAVING_WIDTH);
-        savingColumn.getStyleClass().add(UIConstants.ALIGN_CENTER);
-        savingColumn.setCellValueFactory(param -> param.getValue().savingProperty());
-        savingColumn.setCellFactory(param -> new SavingEditingCell<>());
-        savingColumn.setOnEditCommit(e -> e.getTableView().getItems().get(e.getTablePosition().getRow()).setSaving(e.getNewValue()));
+        val savingColumn = TableColumn<EntryTableRow, Boolean>("Saving")
+        savingColumn.prefWidth = UIConstants.SAVING_WIDTH
+        savingColumn.styleClass.add(UIConstants.ALIGN_CENTER)
+        savingColumn.setCellValueFactory { param -> param.value.savingProperty() }
+        savingColumn.setCellFactory { SavingEditingCell() }
+        savingColumn.setOnEditCommit { e: TableColumn.CellEditEvent<EntryTableRow?, Boolean> -> e.tableView.items[e.tablePosition.row]!!.setSaving(e.newValue) }
 
-        final TableColumn<Entry, String> categoryColumn = new TableColumn<>("Category");
-        categoryColumn.setPrefWidth(UIConstants.CATEGORY_WIDTH);
-        categoryColumn.getStyleClass().add(UIConstants.ALIGN_LEFT);
-        categoryColumn.setCellValueFactory(param -> param.getValue().categoryProperty());
-        categoryColumn.setCellFactory(ComboBoxTableCell.forTableColumn(FXCollections.observableList(categories)));
-        categoryColumn.setOnEditCommit(e -> e.getTableView().getItems().get(e.getTablePosition().getRow()).setCategory(e.getNewValue()));
+        val categoryColumn = TableColumn<EntryTableRow, String>("Category")
+        categoryColumn.prefWidth = UIConstants.CATEGORY_WIDTH
+        categoryColumn.styleClass.add(UIConstants.ALIGN_LEFT)
+        categoryColumn.setCellValueFactory { param -> param.value.categoryProperty() }
+        categoryColumn.cellFactory = ComboBoxTableCell.forTableColumn(FXCollections.observableList(categories))
+        categoryColumn.setOnEditCommit { e: TableColumn.CellEditEvent<EntryTableRow, String> -> e.tableView.items[e.tablePosition.row]!!.setCategory(e.newValue) }
 
-        final TableColumn<Entry, String> commentColumn = new TableColumn<>("Comment");
-        commentColumn.setPrefWidth(UIConstants.COMMENT_IMPORT_WIDTH);
-        commentColumn.getStyleClass().add(UIConstants.ALIGN_LEFT);
-        commentColumn.setCellValueFactory(param -> param.getValue().commentProperty());
-        commentColumn.setCellFactory(TextFieldTableCell.forTableColumn());
-        commentColumn.setOnEditCommit(e -> e.getTableView().getItems().get(e.getTablePosition().getRow()).setComment(e.getNewValue()));
+        val commentColumn = TableColumn<EntryTableRow, String>("Comment")
+        commentColumn.prefWidth = UIConstants.COMMENT_IMPORT_WIDTH
+        commentColumn.styleClass.add(UIConstants.ALIGN_LEFT)
+        commentColumn.setCellValueFactory { param -> param.value!!.commentProperty() }
+        commentColumn.setCellFactory(TextFieldTableCell.forTableColumn())
+        commentColumn.setOnEditCommit { e: TableColumn.CellEditEvent<EntryTableRow?, String> -> e.tableView.items[e.tablePosition.row]!!.setComment(e.newValue) }
 
-        TableColumn<Entry, Boolean> deleteColumn = new TableColumn<>("");
-        deleteColumn.setPrefWidth(UIConstants.ACTION_IMPORT_WIDTH);
-        deleteColumn.getStyleClass().add(UIConstants.ALIGN_CENTER);
-        deleteColumn.setSortable(false);
+        val buttonBarCell = TableColumn<EntryTableRow, Boolean>("")
+        buttonBarCell.prefWidth = UIConstants.ACTION_IMPORT_WIDTH
+        buttonBarCell.styleClass.add(UIConstants.ALIGN_CENTER)
+        buttonBarCell.isSortable = false
 
         // define a simple boolean cell value for the action column so that the column will only be shown for non-empty rows.
-        deleteColumn.setCellValueFactory(features -> new SimpleBooleanProperty(features.getValue() != null));
+        buttonBarCell.setCellValueFactory { SimpleBooleanProperty(it.value != null) }
 
         // getEntryRepository a cell value factory with an add button for each row in the table.
-        deleteColumn.setCellFactory(personBooleanTableColumn -> new ButtonBarCell());
+        buttonBarCell.setCellFactory { ButtonBarCell() }
 
-        entryTable.getColumns().clear();
-        entryTable.getColumns().add(dateColumn);
-        entryTable.getColumns().add(sequenceColumn);
-        entryTable.getColumns().add(amountColumn);
-        entryTable.getColumns().add(savingColumn);
-        entryTable.getColumns().add(categoryColumn);
-        entryTable.getColumns().add(commentColumn);
-        entryTable.getColumns().add(deleteColumn);
+        entryTable.columns.clear()
+        entryTable.columns.add(dateColumn)
+        entryTable.columns.add(sequenceColumn)
+        entryTable.columns.add(amountColumn)
+        entryTable.columns.add(savingColumn)
+        entryTable.columns.add(categoryColumn)
+        entryTable.columns.add(commentColumn)
+        entryTable.columns.add(buttonBarCell)
     }
 
-    private void onItemsChanged(ListChangeListener.Change<? extends Entry> change) {
+    private fun createContextMenu(eventHandler: EventHandler<ActionEvent>): ContextMenu {
 
-        ObservableList<? extends Entry> observableValue = change.getList();
+        val menu = ContextMenu()
 
-        if (observableValue == null || observableValue.isEmpty()) {
-            entryCounterLabel.setText("0");
-        } else {
-            entryCounterLabel.setText(observableValue.size() + "");
-        }
-    }
+        val menuItem = MenuItem("Set Entry Order")
+        menuItem.onAction = eventHandler
 
-    private ContextMenu createContextMenu(final EventHandler<ActionEvent> eventHandler) {
+        menu.items.add(menuItem)
 
-        final MenuItem menuItem = new MenuItem("Set Entry Order");
-        menuItem.setOnAction(eventHandler);
-
-        final ContextMenu menu = new ContextMenu();
-        menu.getItems().add(menuItem);
-
-        return menu;
+        return menu
     }
 
     /**
      * Displays a Delete button, that removes the line in which the button was activated.
      */
-    private class ButtonBarCell extends TableCell<Entry, Boolean> {
+    private inner class ButtonBarCell : TableCell<EntryTableRow, Boolean?>() {
 
-        HBox buttonBar = new HBox();
+        private val buttonBar = HBox()
 
-        // a button for adding a new person.
+        init {
+            buttonBar.alignment = Pos.BASELINE_CENTER
 
-
-        ButtonBarCell() {
-
-            // pads and centers the add button in the cell.
-            buttonBar.setAlignment(Pos.BASELINE_CENTER);
-            //buttonBar.setSpacing(1.0);
-
-
-            buttonBar.getChildren().add(buildButton(FontAwesomeIcon.TRASH, this::deleteButtonPressed));
-            buttonBar.getChildren().add(buildButton(FontAwesomeIcon.COPY, this::splitButtonPressed));
+            buttonBar.children.add(buildButton(FontAwesomeIcon.TRASH) { deleteButtonPressed() })
+            buttonBar.children.add(buildButton(FontAwesomeIcon.COPY) { splitButtonPressed(it) })
         }
 
-        private Node buildButton(FontAwesomeIcon icon, EventHandler<ActionEvent> onAction) {
+        private fun buildButton(icon: FontAwesomeIcon, onAction: EventHandler<ActionEvent>): Node {
 
-            final Button button = new Button();
-            button.setGraphic(new FontAwesomeIconView(icon, "1.25em"));
-            button.setContentDisplay(ContentDisplay.CENTER);
-            button.setOnAction(onAction);
+            val button = Button()
+            button.graphic = FontAwesomeIconView(icon, "1.25em")
+            button.contentDisplay = ContentDisplay.CENTER
+            button.onAction = onAction
 
+            val paddedButton = StackPane(button)
+            paddedButton.padding = Insets(3.0)
 
-            final StackPane paddedButton = new StackPane(button);
-            paddedButton.setPadding(new Insets(3));
-
-            return paddedButton;
+            return paddedButton
         }
 
-        @Override
-        protected void updateItem(Boolean item, boolean empty) {
+        override fun updateItem(item: Boolean?, empty: Boolean) {
 
-            super.updateItem(item, empty);
+            super.updateItem(item, empty)
 
-            if (!empty) {
-                //places the button in the row only if the row is not empty.
-                setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
-                setGraphic(buttonBar);
+            if (empty || item == null) {
+                graphic = null
             } else {
-                setGraphic(null);
+                //places the button in the row only if the row is not empty.
+                contentDisplay = ContentDisplay.GRAPHIC_ONLY
+                graphic = buttonBar
             }
         }
 
-        private void deleteButtonPressed(ActionEvent actionEvent) {
+        private fun deleteButtonPressed() {
 
-            getTableView().getItems().remove(getIndex());
+            tableView.items.removeAt(index)
         }
 
-        private void splitButtonPressed(ActionEvent actionEvent) {
+        private fun splitButtonPressed(actionEvent: ActionEvent) {
 
-            new SplitEntryPopover(getTableView().getItems(), getTableRow().getItem()).show((Node) actionEvent.getSource());
+            SplitEntryPopover(tableView.items as ObservableList<EntryTableRow>, tableRow.item!!).show(actionEvent.source as Node)
         }
-
 
     }
-
 }

@@ -10,13 +10,9 @@ class MatchingEntryPair(val earlier: Entry?, val later: Entry?) : Comparable<Mat
 
     fun getReferenceEntry(): Entry {
 
-        return if (this.later != null) {
-            //the later entry is the more relevant entry
-            later
-        } else {
-            //there always is at least one non-null value which taken care of in the constructor, which is why we can be sure here
-            earlier!!
-        }
+        //the later entry is the more relevant entry
+        //there always is at least one non-null value which taken care of in the constructor, which is why we can be sure here
+        return later ?: earlier!!
     }
 
     fun isMatch(): Boolean {
@@ -44,9 +40,10 @@ class MatchingEntryPair(val earlier: Entry?, val later: Entry?) : Comparable<Mat
 
     override fun compareTo(other: MatchingEntryPair): Int {
 
-        val comparator = compareBy(this::extractDayOfEntry)
-                .thenComparing(Entry::amount)
-                .thenComparing(Entry::comment)
+        val comparator =
+                compareBy(::extractDayOfEntry)
+                        .thenComparing(Entry::amount)
+                        .thenComparing(Entry::comment)
 
         return comparator.compare(this.getReferenceEntry(), other.getReferenceEntry())
     }

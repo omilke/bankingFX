@@ -60,6 +60,14 @@ $warn: #FF851B;
 .popover .bottom-status-bar .label {
 
   -fx-text-fill: $chart-font-color;
+
+  &.positive {
+    -fx-text-fill: $positive;
+  }
+
+  &.negative {
+    -fx-text-fill: $negative;
+  }
 }
 
 #splitEntryForm .negative .label {

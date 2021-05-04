@@ -86,7 +86,7 @@ public class CategoryOverTimeElementTest {
 
         categorySums.add(new CategoryOverTimeElement("second", thirdElementValue));
 
-        CategoryOverTimeElement sumOverTime = CategoryOverTimeElement.buildSumOverTimeElement(categorySums);
+        CategoryOverTimeElement sumOverTime = CategoryOverTimeElement.Companion.buildSumOverTimeElement(categorySums);
 
         assertThat(sumOverTime.getCategoryName()).isEqualTo("Sum");
         assertThat(sumOverTime.getMonthValues().get(0)).isEqualByComparingTo(new BigDecimal(1));

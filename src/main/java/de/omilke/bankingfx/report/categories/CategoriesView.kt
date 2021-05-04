@@ -135,7 +135,7 @@ class CategoriesView : FxmlView<CategoriesModel> {
 
                 monthColumn.setCellValueFactory {
 
-                    SimpleObjectProperty(it.value.monthValues[i])
+                    SimpleObjectProperty(it.value.getMonthValues()[i])
                 }
 
                 categoryTable.columns += monthColumn

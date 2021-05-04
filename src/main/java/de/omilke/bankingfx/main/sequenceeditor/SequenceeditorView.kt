@@ -1,100 +1,96 @@
-package de.omilke.bankingfx.main.sequenceeditor;
+package de.omilke.bankingfx.main.sequenceeditor
 
-import de.omilke.banking.account.entity.EntrySequence;
-import de.omilke.bankingfx.main.sequenceeditor.model.EntryOrderSetting;
-import de.saxsys.mvvmfx.FluentViewLoader;
-import de.saxsys.mvvmfx.FxmlView;
-import de.saxsys.mvvmfx.ViewTuple;
-import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import de.omilke.banking.account.entity.EntrySequence
+import de.omilke.bankingfx.main.sequenceeditor.model.EntryOrderSetting
+import de.saxsys.mvvmfx.FluentViewLoader
+import de.saxsys.mvvmfx.FxmlView
+import javafx.fxml.FXML
+import javafx.scene.control.*
+import javafx.util.Callback
+import java.util.*
 
-import java.util.Optional;
-
-public class SequenceeditorView implements FxmlView<SequenceeditorModel> {
-
-    @FXML
-    DialogPane dialog;
+class SequenceeditorView : FxmlView<SequenceeditorModel?> {
 
     @FXML
-    ChoiceBox<EntrySequence> sequence;
+    lateinit var dialog: DialogPane
 
     @FXML
-    TextField order;
+    lateinit var sequence: ChoiceBox<EntrySequence>
 
-    public void initialize() {
+    @FXML
+    lateinit var order: TextField
 
-        initSequence(this.sequence);
-        initOrder(this.order);
+    fun initialize() {
 
+        initSequence(sequence)
+        initOrder(order)
     }
 
-    private void initSequence(final ChoiceBox<EntrySequence> choiceBox) {
+    private fun initSequence(choiceBox: ChoiceBox<EntrySequence>) {
 
-        choiceBox.getItems().clear();
-        choiceBox.getItems().addAll(EntrySequence.values());
+        choiceBox.items.clear()
+        choiceBox.items.addAll(*EntrySequence.values())
 
-        choiceBox.setValue(EntrySequence.REGULAR);
+        choiceBox.value = EntrySequence.REGULAR
     }
 
-    private void initOrder(final TextField textfield) {
+    private fun initOrder(textfield: TextField) {
 
-        textfield.setText("0");
+        textfield.text = "0"
     }
 
-    private EntryOrderSetting provide(ButtonType buttonType) {
+    private fun provide(buttonType: ButtonType): EntryOrderSetting? {
 
-        EntryOrderSetting result;
-
-        if (buttonType == ButtonType.APPLY) {
-            try {
-                result = getResult();
-            } catch (final InvalidEntryOrderException e) {
-                result = null;
+        return when (buttonType) {
+            ButtonType.APPLY -> try {
+                this.result
+            } catch (e: InvalidEntryOrderException) {
+                null
             }
-        } else {
-            result = null;
+            else -> null
+        }
+    }
+
+    @get:Throws(InvalidEntryOrderException::class)
+    private val result: EntryOrderSetting
+        get() {
+
+            val text = order.text
+
+            return try {
+                val orderIndex = text.toInt()
+
+                // exactly two digit
+                if (orderIndex in 0..99) {
+                    EntryOrderSetting(sequence.value, orderIndex)
+                } else {
+                    throw InvalidEntryOrderException(orderIndex)
+                }
+            } catch (e: NumberFormatException) {
+                throw InvalidEntryOrderException(text)
+            }
         }
 
-        return result;
+    private fun initValues(sequence: EntrySequence?, orderIndex: Int?) {
+
+        this.sequence.value = sequence
+        order.text = orderIndex?.toString()
     }
 
-    private EntryOrderSetting getResult() throws InvalidEntryOrderException {
+    companion object {
 
-        final String text = this.order.getText();
+        fun openView(sequence: EntrySequence?, orderIndex: Int?): Optional<EntryOrderSetting> {
 
-        try {
-            final int orderIndex = Integer.parseInt(text);
+            val viewTuple = FluentViewLoader.fxmlView(SequenceeditorView::class.java).load()
+            val view = viewTuple.codeBehind
 
-            // exactly two digit
-            if (orderIndex >= 0 && orderIndex < 100) {
-                return new EntryOrderSetting(this.sequence.getValue(), orderIndex);
-            } else {
-                throw new InvalidEntryOrderException(orderIndex);
-            }
-        } catch (final NumberFormatException e) {
-            throw new InvalidEntryOrderException(text);
+            view.initValues(sequence, orderIndex)
+
+            val dialog = Dialog<EntryOrderSetting>()
+            dialog.dialogPane = viewTuple.view as DialogPane
+            dialog.resultConverter = Callback { view.provide(it) }
+
+            return dialog.showAndWait()
         }
-
     }
-
-    private void initValues(final EntrySequence sequence, final int orderIndex) {
-
-        this.sequence.setValue(sequence);
-        this.order.setText("" + orderIndex);
-
-    }
-
-    public static Optional<EntryOrderSetting> openView(final EntrySequence sequence, final int orderIndex) {
-
-        ViewTuple<SequenceeditorView, SequenceeditorModel> viewTuple = FluentViewLoader.fxmlView(SequenceeditorView.class).load();
-        SequenceeditorView view = viewTuple.getCodeBehind();
-        view.initValues(sequence, orderIndex);
-
-        final Dialog<EntryOrderSetting> dialog = new Dialog<>();
-        dialog.setDialogPane((DialogPane) viewTuple.getView());
-        dialog.setResultConverter(view::provide);
-
-        return dialog.showAndWait();
-    }
-
 }

@@ -1,8 +1,8 @@
 package de.omilke.bankingfx.main.converter
 
-import de.omilke.banking.account.entity.EntrySequence
 import de.omilke.bankingfx.UIConstants
-import de.omilke.bankingfx.main.entrylist.model.Entry
+import de.omilke.bankingfx.controls.UIUtils
+import de.omilke.bankingfx.main.entrylist.model.EntryTableRow
 import javafx.collections.ObservableList
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
@@ -16,10 +16,9 @@ import org.controlsfx.control.textfield.CustomTextField
 import java.io.IOException
 import java.math.BigDecimal
 
-
 class SplitEntryPopover(
-    private val items: ObservableList<Entry>,
-    private val entry: Entry
+        private val items: ObservableList<EntryTableRow>,
+        private val entryTableRow: EntryTableRow
 ) : PopOver(VBox()) {
 
     @FXML
@@ -48,7 +47,7 @@ class SplitEntryPopover(
 
         setupPopover()
 
-        prepare(entry)
+        prepare(entryTableRow)
 
     }
 
@@ -83,14 +82,14 @@ class SplitEntryPopover(
         splitButton.isDefaultButton = true
     }
 
-    private fun prepare(entry: Entry) {
+    private fun prepare(entryTableRow: EntryTableRow) {
 
-        entryComment.text = entry.comment
-        entryCategory.text = entry.category
-        entryDate.text = entry.entryDate.format(UIConstants.DATE_FORMATTER)
+        entryComment.text = entryTableRow.getComment()
+        entryCategory.text = entryTableRow.getCategory()
+        entryDate.text = entryTableRow.getEntryDate().format(UIConstants.DATE_FORMATTER)
 
-        entryAmount.text = entry.amount.toPlainString()
-        applyColor(entryAmount, entry.amount < BigDecimal.ZERO)
+        entryAmount.text = entryTableRow.getAmount()?.toPlainString()
+        applyColor(entryAmount, entryTableRow.getAmount())
 
         definedAmount.textProperty().addListener { _, _, newValue -> onAmountChanged(newValue) }
         definedAmount.text = "0"
@@ -111,40 +110,39 @@ class SplitEntryPopover(
     private fun checkDefinedAmount(newValue: BigDecimal?) {
 
         if (newValue != null) {
-            val signumDiffers = newValue.signum() != entry.amount.signum()
+            val signumDiffers = newValue.signum() != entryTableRow.getAmount()!!.signum()
                     //essentially avoid warning when value is 0
                     && newValue.compareTo(BigDecimal.ZERO) != 0
 
             definedAmount.left.isVisible = signumDiffers
 
-            applyColor(definedAmount, newValue < BigDecimal.ZERO)
+            applyColor(definedAmount, newValue)
         }
-
     }
 
     private fun updateLeftoverAmount(newValue: BigDecimal?) {
 
         if (newValue != null) {
-            val delta = entry.amount - newValue
+            val delta = entryTableRow.getAmount()!! - newValue
             leftoverAmount.text = delta.toString()
             leftoverAmount.left.isVisible = false
 
-            applyColor(leftoverAmount, delta < BigDecimal.ZERO)
+            applyColor(leftoverAmount, delta)
         } else {
             leftoverAmount.left.isVisible = true
             leftoverAmount.text = ""
         }
     }
 
-    private fun applyColor(element: Node, isNegative: Boolean) {
+    private fun applyColor(element: Node, value: BigDecimal?) {
 
         element.styleClass.remove(UIConstants.POSITIVE)
         element.styleClass.remove(UIConstants.NEGATIVE)
 
-        if (isNegative) {
-            element.styleClass.add(UIConstants.NEGATIVE)
-        } else {
+        if (UIUtils.isPositive(value)) {
             element.styleClass.add(UIConstants.POSITIVE)
+        } else {
+            element.styleClass.add(UIConstants.NEGATIVE)
         }
     }
 
@@ -156,26 +154,25 @@ class SplitEntryPopover(
     @FXML
     fun performSplit() {
 
-        val originalIndex = items.indexOf(entry)
+        val originalIndex = items.indexOf(entryTableRow)
 
-        items.remove(entry)
-        items.add(originalIndex, splitEntryWithAmount(entry, definedAmount.text.toBigDecimal()))
-        items.add(originalIndex + 1, splitEntryWithAmount(entry, leftoverAmount.text.toBigDecimal()))
+        items.remove(entryTableRow)
+        items.add(originalIndex, splitEntryWithAmount(entryTableRow, definedAmount.text.toBigDecimal()))
+        items.add(originalIndex + 1, splitEntryWithAmount(entryTableRow, leftoverAmount.text.toBigDecimal()))
 
         hide()
     }
 
-    private fun splitEntryWithAmount(entry: Entry, newAmount: BigDecimal): Entry {
+    private fun splitEntryWithAmount(entryTableRow: EntryTableRow, newAmount: BigDecimal): EntryTableRow {
 
-        //EntryOrder.of(entryDate, sequence, orderIndex)
-        return Entry(
-            entry.entryDate,
-            entry.entryOrder.sequence,
-            entry.entryOrder.orderIndex,
-            newAmount,
-            entry.saving,
-            entry.category,
-            entry.comment
+        return EntryTableRow(
+                entryTableRow.getEntryDate(),
+                entryTableRow.getEntryOrder(),
+                newAmount,
+                entryTableRow.getSaving(),
+                entryTableRow.getCategory(),
+                entryTableRow.getComment(),
+                false
         )
     }
 

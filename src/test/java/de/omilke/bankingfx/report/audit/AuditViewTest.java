@@ -13,7 +13,7 @@ public class AuditViewTest {
     public void testValueOf() {
 
         final AuditView cut = new AuditView();
-        cut.locale = Locale.GERMANY;
+        cut.setLocale(Locale.GERMANY);
 
         assertThat(cut.valueOf(null)).isEqualByComparingTo(BigDecimal.ZERO);
         assertThat(cut.valueOf("")).isEqualByComparingTo(BigDecimal.ZERO);

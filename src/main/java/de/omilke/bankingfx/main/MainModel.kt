@@ -1,10 +1,8 @@
-package de.omilke.bankingfx.main;
+package de.omilke.bankingfx.main
 
-import de.saxsys.mvvmfx.ViewModel;
+import de.saxsys.mvvmfx.ViewModel
 
 /**
  * @author Oliver Milke
  */
-public class MainModel implements ViewModel {
-
-}
+class MainModel : ViewModel

@@ -33,7 +33,6 @@ class TransactionView : FxmlView<TransactionModel> {
 
     private fun displaySecurities() {
 
-
         for (security in sr.findAllSecurity()) {
 
             val currentRoot = TreeItem(TransactionTableRow(security))
@@ -54,9 +53,8 @@ class TransactionView : FxmlView<TransactionModel> {
             if (!security.isClosedPosition) {
 
                 val quote = YahooFinance.get(security.referenceTicker)?.quote
-                if (quote != null) {
-
-                    val aggregateElement = TreeItem(TransactionTableRow("Change", security.updateCurrentPrice(quote.price)))
+                quote?.let {
+                    val aggregateElement = TreeItem(TransactionTableRow("Change", security.updateCurrentPrice(it.price)))
                     currentRoot.children.add(aggregateElement)
                 }
 

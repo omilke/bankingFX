@@ -1,46 +1,34 @@
-package de.omilke.bankingfx.report.categories.control;
+package de.omilke.bankingfx.report.categories.control
 
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import de.omilke.banking.account.entity.Entry;
-import de.omilke.bankingfx.UIConstants;
-import de.omilke.bankingfx.controls.UIUtils;
-import javafx.scene.control.TableCell;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
-
-import java.math.BigDecimal;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon
+import de.omilke.banking.account.entity.Entry
+import de.omilke.bankingfx.UIConstants
+import de.omilke.bankingfx.controls.UIUtils.getIconWithColor
+import javafx.scene.control.TableCell
+import javafx.scene.paint.Color
+import java.math.BigDecimal
 
 /**
  * Created by Olli on 27.05.2017.
  */
-public class SavingTableCell extends TableCell<Entry, Boolean> {
+class SavingTableCell : TableCell<Entry?, Boolean?>() {
 
-    @Override
-    protected void updateItem(final Boolean item, final boolean empty) {
+    override fun updateItem(item: Boolean?, empty: Boolean) {
 
-        super.updateItem(item, empty);
+        super.updateItem(item, empty)
 
-        Object rowItem = getTableRow().getItem();
-        if (!empty && item != null && item && rowItem != null) {
+        val rowItem: Any? = tableRow.item
+        graphic = when {
+            !empty && item != null && item && rowItem != null -> {
 
-            final Entry selectedEntry = (Entry) rowItem;
-            getStyleClass().add(UIConstants.ALIGN_CENTER);
-
-            final BigDecimal amount = selectedEntry.getAmount();
-
-            final Text icon;
-
-            if (amount.compareTo(BigDecimal.ZERO) < 0) {
-                icon = UIUtils.INSTANCE.getIconWithColor(FontAwesomeIcon.DOWNLOAD, Color.GREEN);
-            } else {
-                icon = UIUtils.INSTANCE.getIconWithColor(FontAwesomeIcon.UPLOAD, Color.RED);
+                val (amount) = rowItem as Entry
+                styleClass.add(UIConstants.ALIGN_CENTER)
+                when {
+                    amount < BigDecimal.ZERO -> getIconWithColor(FontAwesomeIcon.DOWNLOAD, Color.GREEN)
+                    else -> getIconWithColor(FontAwesomeIcon.UPLOAD, Color.RED)
+                }
             }
-
-            setGraphic(icon);
-
-        } else {
-            setGraphic(null);
+            else -> null
         }
-
     }
 }

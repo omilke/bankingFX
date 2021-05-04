@@ -192,10 +192,7 @@ class EntrylistPopover(private val first: YearMonth, private val last: YearMonth
 
     private fun getEntrySum(entries: List<Entry>): BigDecimal {
 
-        return entries
-            .stream()
-            .map(Entry::amount)
-            .reduce(BigDecimal.ZERO, BigDecimal::add)
+        return entries.sumOf(Entry::amount)
     }
 
     private fun getEntryAverage(sumOfEntries: BigDecimal, entryCount: Int): BigDecimal? {
@@ -224,20 +221,21 @@ class EntrylistPopover(private val first: YearMonth, private val last: YearMonth
 
         var result = formatMonthFileName(first)
 
-        if (last != null)
-            result += "_${formatMonthFileName(last)}"
+        last?.let {
+            result += "_${formatMonthFileName(it)}"
+        }
 
-        if (category != null) {
-            result += "_$category"
+        category?.let {
+            result += "_$it"
         }
 
         return result
     }
 
-    private fun saveToSelectedFile(result: Optional<File>) {
+    private fun saveToSelectedFile(result: File?) {
 
-        if (result.isPresent) {
-            saveLinesToFile(result.get(), formatEntries(entryTable.items))
+        result?.let {
+            saveLinesToFile(it, formatEntries(entryTable.items))
         }
     }
 

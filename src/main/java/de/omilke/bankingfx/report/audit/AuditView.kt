@@ -1,133 +1,122 @@
-package de.omilke.bankingfx.report.audit;
+package de.omilke.bankingfx.report.audit
 
-import de.omilke.banking.BankingConfigurator;
-import de.omilke.banking.account.entity.Entry;
-import de.omilke.banking.account.entity.EntryRepository;
-import de.omilke.banking.persistence.PersistenceServiceProvider;
-import de.omilke.bankingfx.UIConstants;
-import de.saxsys.mvvmfx.FxmlView;
-import javafx.fxml.FXML;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
+import de.omilke.banking.BankingConfigurator.configuredLocale
+import de.omilke.banking.account.entity.Entry
+import de.omilke.banking.persistence.PersistenceServiceProvider.persistenceService
+import de.omilke.bankingfx.UIConstants
+import de.saxsys.mvvmfx.FxmlView
+import javafx.fxml.FXML
+import javafx.scene.control.DatePicker
+import javafx.scene.control.TextField
+import java.math.BigDecimal
+import java.text.DecimalFormat
+import java.text.NumberFormat
+import java.text.ParseException
+import java.time.LocalDate
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Locale;
+class AuditView : FxmlView<AuditModel> {
 
-public class AuditView implements FxmlView<AuditModel> {
-
-    private EntryRepository er = PersistenceServiceProvider.INSTANCE.getPersistenceService().getEntryRepository();
+    private val er = persistenceService.entryRepository
 
     @FXML
-    DatePicker datePicker;
+    lateinit var datePicker: DatePicker
 
     @FXML
-    TextField actualBalance;
-    @FXML
-    TextField correction;
-    @FXML
-    TextField regularBalance;
-    @FXML
-    TextField savings;
-    @FXML
-    TextField delta;
+    lateinit var actualBalance: TextField
 
-    Locale locale = BankingConfigurator.INSTANCE.configuredLocale();
+    @FXML
+    lateinit var correction: TextField
 
-    public void initialize() {
+    @FXML
+    lateinit var regularBalance: TextField
 
-        this.datePicker.setValue(LocalDate.now());
+    @FXML
+    lateinit var savings: TextField
 
-        this.loadBalance();
+    @FXML
+    lateinit var delta: TextField
+
+    var locale = configuredLocale()
+
+    fun initialize() {
+
+        datePicker.value = LocalDate.now()
+
+        loadBalance()
     }
 
     @FXML
-    public void loadBalance() {
+    fun loadBalance() {
 
-        final List<Entry> allEntriesInRange = this.er.findAllEntriesBetweenWithCategoryName(null, this.datePicker.getValue(), null);
+        val allEntriesInRange: List<Entry> = er.findAllEntriesBetweenWithCategoryName(null, datePicker.value, null)
 
-        // @formatter:off
-        final BigDecimal totalBalance = allEntriesInRange
-                .stream()
-                .map(Entry::getAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-        // @formatter:on
+        val totalBalance = allEntriesInRange.sumOf(Entry::amount)
 
-        this.formatTextField(this.regularBalance, totalBalance);
+        formatTextField(regularBalance, totalBalance)
 
-        // @formatter:off
-        final BigDecimal savings = allEntriesInRange
-                .stream()
+        val savings = allEntriesInRange
                 .filter(Entry::isSaving)
-                .map(Entry::getAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
-                .multiply(new BigDecimal(-1));
-        // @formatter:on
+                .sumOf(Entry::amount)
+                .negate()
 
-        formatTextField(this.savings, savings);
+        formatTextField(this.savings, savings)
 
-        this.setDelta();
+        setDelta()
     }
 
-    private void formatTextField(final TextField textfield, final BigDecimal value) {
+    private fun formatTextField(text: TextField, value: BigDecimal) {
 
-        textfield.setText(NumberFormat.getCurrencyInstance(locale).format(value));
+        text.text = NumberFormat.getCurrencyInstance(locale).format(value)
 
-        if (value.compareTo(BigDecimal.ZERO) >= 0) {
-            textfield.getStyleClass().remove(UIConstants.NEGATIVE);
-            textfield.getStyleClass().add(UIConstants.POSITIVE);
+        if (value >= BigDecimal.ZERO) {
+            text.styleClass.remove(UIConstants.NEGATIVE)
+            text.styleClass.add(UIConstants.POSITIVE)
         } else {
-            textfield.getStyleClass().remove(UIConstants.POSITIVE);
-            textfield.getStyleClass().add(UIConstants.NEGATIVE);
+            text.styleClass.remove(UIConstants.POSITIVE)
+            text.styleClass.add(UIConstants.NEGATIVE)
         }
     }
 
     @FXML
-    public void setDelta() {
+    fun setDelta() {
 
-        final BigDecimal regularBalance = valueOf(this.regularBalance.getText());
-        final BigDecimal savings = valueOf(this.savings.getText());
+        val regularBalance = valueOf(regularBalance.text)
+        val savings = valueOf(savings.text)
 
-        final BigDecimal actualBalance = valueOf(this.actualBalance.getText());
-        final BigDecimal corrections = valueOf(this.correction.getText());
+        val actualBalance = valueOf(actualBalance.text)
+        val corrections = valueOf(correction.text)
 
-        final BigDecimal delta = calculateDelta(regularBalance, savings, actualBalance, corrections);
+        val delta = calculateDelta(regularBalance, savings, actualBalance, corrections)
 
-        this.formatTextField(this.delta, delta);
+        formatTextField(this.delta, delta)
     }
 
-    BigDecimal calculateDelta(final BigDecimal balance, final BigDecimal savings, final BigDecimal actualBalance, final BigDecimal corrections) {
+    fun calculateDelta(balance: BigDecimal, savings: BigDecimal?, actualBalance: BigDecimal, corrections: BigDecimal?): BigDecimal {
 
-        final BigDecimal totalRegularBalance = balance.add(savings);
-        final BigDecimal totalActualBalance = actualBalance.add(corrections);
+        val totalRegularBalance = balance.add(savings)
+        val totalActualBalance = actualBalance.add(corrections)
 
-        final BigDecimal delta = totalActualBalance.subtract(totalRegularBalance);
-        return delta;
+        return totalActualBalance.subtract(totalRegularBalance)
     }
 
     /**
-     * Liefert die Zahl aus einem Text. Liefert {@link BigDecimal#ZERO}, wenn der String <code>null</code> oder leer ist. Akzeptiert auch
-     * nachgestellte Währungszeichen, bspw. <code>123,22 €</code>
+     * Returns a number from a String, even when there is a currency symbol attached, e. g. `123,22 €`.
+     *
+     *
+     * Returns [BigDecimal.ZERO] in case the String is `null`, empty or cannot be parsed.
      */
-    BigDecimal valueOf(final String text) {
+    fun valueOf(text: String?): BigDecimal {
 
-        if (text == null || text.isEmpty()) {
-            return BigDecimal.ZERO;
-        } else {
-            try {
-                final DecimalFormat df = (DecimalFormat) DecimalFormat.getNumberInstance(locale);
-                df.setParseBigDecimal(true);
+        return when {
+            text.isNullOrEmpty() -> BigDecimal.ZERO
+            else -> try {
+                val df = DecimalFormat.getNumberInstance(locale) as DecimalFormat
+                df.isParseBigDecimal = true
 
-                return (BigDecimal) df.parse(text);
-            } catch (final ParseException e) {
-                return BigDecimal.ZERO;
+                df.parse(text) as BigDecimal
+            } catch (e: ParseException) {
+                BigDecimal.ZERO
             }
-
         }
     }
-
 }

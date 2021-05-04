@@ -1,94 +1,59 @@
-package de.omilke.bankingfx.main.entrylist.model;
+package de.omilke.bankingfx.main.entrylist.model
 
-import de.omilke.banking.account.entity.EntrySequence;
-
-import java.time.LocalDate;
+import de.omilke.banking.account.entity.EntrySequence
+import java.time.LocalDate
 
 /**
- * Provides total order of entries with respect to {@link EntrySequence} and the order index of {@link Entry} entity.
+ * Provides total order of entries with respect to [EntrySequence] and the order index of [EntryTableRow] entity.
  *
  * @author Oliver Milke
  * @since 10.08.2015
  */
-public class EntryOrder implements Comparable<EntryOrder> {
+class EntryOrder constructor(private val date: LocalDate, val sequence: EntrySequence, val orderIndex: Int) : Comparable<EntryOrder> {
 
-    private final LocalDate date;
-    private final EntrySequence sequence;
-    private final int orderIndex;
+    val order: Long = calculateOrder(date, sequence, orderIndex)
 
-    private final long order;
-
-    private EntryOrder(final LocalDate date, final EntrySequence sequence, final int orderIndex) {
-
-        this.date = date;
-        this.sequence = sequence;
-        this.orderIndex = orderIndex;
-
-        this.order = calculateOrder(date, sequence, orderIndex);
-
+    fun update(newSequence: EntrySequence, newOrderIndex: Int): EntryOrder {
+        return EntryOrder(date, newSequence, newOrderIndex)
     }
 
-    public EntryOrder update(final EntrySequence newSequence, final int newOrderIndex) {
-
-        return EntryOrder.of(date, newSequence, newOrderIndex);
+    fun update(newDate: LocalDate): EntryOrder {
+        return EntryOrder(newDate, sequence, orderIndex)
     }
 
-    public EntryOrder update(final LocalDate newDate) {
+    override fun compareTo(other: EntryOrder): Int {
 
-        return EntryOrder.of(newDate, sequence, orderIndex);
-    }
-
-    public final EntrySequence getSequence() {
-
-        return sequence;
-    }
-
-    public final int getOrderIndex() {
-
-        return orderIndex;
-    }
-
-    public final long getOrder() {
-
-        return order;
-    }
-
-    @Override
-    public final int compareTo(final EntryOrder o) {
-
-        final long difference = this.order - o.order;
-
-        final int result;
-        if (difference < 0) {
-            result = -1;
-        } else if (difference > 0) {
-            result = 1;
-        } else {
-            result = 0;
-        }
-
-        return result;
-    }
-
-    public static EntryOrder of(final LocalDate date, final EntrySequence sequence, final int orderIndex) {
-
-        if (date == null || sequence == null) {
-            return null;
-        } else {
-            return new EntryOrder(date, sequence, orderIndex);
+        //TODO: this is actually just a hack to be able to use an integer comparator and could be solved with kotlins compareBy and selecting the attributes properly
+        val difference = order - other.order
+        return when {
+            difference < 0 -> -1
+            difference > 0 -> 1
+            else -> 0
         }
     }
 
-    static long calculateOrder(final LocalDate date, final EntrySequence sequence, final int orderIndex) {
+    companion object {
 
-        // @formatter:off
-        return date.getDayOfMonth()
-                + orderIndex * 100L
-                + sequence.ordinal() * (100L) * 100
-                + date.getMonthValue() * (100L * 100) * 10
-                + date.getYear() * (100L * 100 * 10) * 100;
-        // @formatter:on
+        @kotlin.jvm.JvmStatic
+        fun of(date: LocalDate?, sequence: EntrySequence?, orderIndex: Int?): EntryOrder? {
 
+            return when {
+                date == null || sequence == null || orderIndex == null -> null
+                else -> EntryOrder(date, sequence, orderIndex)
+            }
+        }
+
+        @kotlin.jvm.JvmStatic
+        fun calculateOrder(date: LocalDate, sequence: EntrySequence, orderIndex: Int): Long {
+
+            // @formatter:off
+            return (date.dayOfMonth
+                    + orderIndex * 100L
+                    + sequence.ordinal * 100L * 100
+                    + date.monthValue * (100L * 100) * 10
+                    + date.year * (100L * 100 * 10) * 100)
+            // @formatter:on
+        }
     }
 
 }

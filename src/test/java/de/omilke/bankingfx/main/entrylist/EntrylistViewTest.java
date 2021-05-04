@@ -20,13 +20,4 @@ public class EntrylistViewTest {
         assertThat(cut.isInFutureMonth(LocalDate.now().plusMonths(2))).isTrue();
     }
 
-    @Test
-    public void testGetFirstOfMonth() {
-
-        final EntrylistView cut = new EntrylistView();
-
-        assertThat(cut.getFirstOfMonth(LocalDate.of(2015, 8, 15))).isEqualTo(LocalDate.of(2015, 8, 1));
-        assertThat(cut.getFirstOfMonth(LocalDate.of(2015, 8, 1))).isEqualTo(LocalDate.of(2015, 8, 1));
-    }
-
 }

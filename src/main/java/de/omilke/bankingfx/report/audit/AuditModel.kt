@@ -1,10 +1,8 @@
-package de.omilke.bankingfx.report.audit;
+package de.omilke.bankingfx.report.audit
 
-import de.saxsys.mvvmfx.ViewModel;
+import de.saxsys.mvvmfx.ViewModel
 
 /**
  * @author Oliver Milke
  */
-public class AuditModel implements ViewModel {
-
-}
+class AuditModel : ViewModel

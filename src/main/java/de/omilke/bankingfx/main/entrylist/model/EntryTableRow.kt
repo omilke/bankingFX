@@ -1,168 +1,145 @@
-package de.omilke.bankingfx.main.entrylist.model;
+package de.omilke.bankingfx.main.entrylist.model
 
-import de.omilke.banking.account.entity.EntrySequence;
-import javafx.beans.property.*;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
+import de.omilke.banking.account.entity.Entry
+import javafx.beans.property.ObjectProperty
+import javafx.beans.property.SimpleObjectProperty
+import javafx.beans.property.SimpleStringProperty
+import javafx.beans.property.StringProperty
+import javafx.beans.value.ChangeListener
+import javafx.beans.value.ObservableValue
+import java.math.BigDecimal
+import java.time.LocalDate
 
 /**
- * @author Oliver Milke
+ * A model class for use in the main TreeTableView to display grouped entries.
+ *
  */
-public class Entry {
+class EntryTableRow {
 
-    private final ObjectProperty<LocalDate> entryDate;
-    private final SimpleObjectProperty<EntryOrder> entryOrder;
-    private final ObjectProperty<BigDecimal> amount;
-    private final BooleanProperty saving;
-    private final StringProperty category;
-    private final StringProperty comment;
+    private val entryDate: ObjectProperty<LocalDate>
+    private val entryOrder: SimpleObjectProperty<EntryOrder?>
+    private val amount: ObjectProperty<BigDecimal?>
+    private val saving: ObjectProperty<Boolean?>
+    private val category: StringProperty
+    private val comment: StringProperty
 
-    private final boolean groupElement;
+    val isGroupElement: Boolean
 
-    public Entry(final LocalDate month) {
+    /**
+     * Provides a table row with only a month as grouping element
+     */
+    constructor(month: LocalDate) :
+            this(month, null, null, null, null, null, true)
 
-        this.entryDate = new SimpleObjectProperty<>(month);
-        this.entryOrder = new SimpleObjectProperty<>(null);
-        this.amount = new SimpleObjectProperty<>(null);
-        this.saving = new SimpleBooleanProperty();
-        this.category = new SimpleStringProperty(null);
-        this.comment = new SimpleStringProperty(null);
+    /**
+     * Provides a table row in order to display an entry.
+     */
+    constructor(entry: Entry) :
+            this(entry.entryDate, entry.buildEntryOrder(), entry.amount, entry.isSaving, entry.category, entry.comment, false)
 
-        this.groupElement = true;
+    /**
+     * Provides a table row for use as root row.
+     */
+    constructor() :
+            this(LocalDate.MAX, null, null, null, null, null, true)
+
+    constructor(entryDate: LocalDate, entryOrder: EntryOrder?, amount: BigDecimal?, saving: Boolean?, category: String?, comment: String?,
+                groupElement: Boolean) {
+
+        this.entryDate = SimpleObjectProperty(entryDate)
+        this.entryDate.addListener(DateChangeListener())
+        this.entryOrder = SimpleObjectProperty(entryOrder)
+        this.amount = SimpleObjectProperty(amount)
+        this.saving = SimpleObjectProperty(saving)
+        this.category = SimpleStringProperty(category)
+        this.comment = SimpleStringProperty(comment)
+
+        isGroupElement = groupElement
     }
 
-    public Entry(final de.omilke.banking.account.entity.Entry entry) {
-
-        this(
-                entry.getEntryDate(),
-                entry.getSequence(),
-                entry.getOrderIndex(),
-                entry.getAmount(),
-                entry.isSaving(),
-                entry.getCategory(),
-                entry.getComment());
+    fun getEntryDate(): LocalDate {
+        return entryDate.get()
     }
 
-    public Entry(final LocalDate entryDate, final EntrySequence sequence, final int orderIndex, final BigDecimal amount, final boolean saving,
-                 final String category, final String comment) {
-
-        this.entryDate = new SimpleObjectProperty<>(entryDate);
-        this.entryOrder = new SimpleObjectProperty<>(EntryOrder.of(entryDate, sequence, orderIndex));
-        this.amount = new SimpleObjectProperty<>(amount);
-        this.saving = new SimpleBooleanProperty(saving);
-        this.category = new SimpleStringProperty(category);
-        this.comment = new SimpleStringProperty(comment);
-
-        this.groupElement = false;
-
-        this.entryDate.addListener(new DateChangeListener());
+    fun setEntryDate(date: LocalDate) {
+        entryDate.set(date)
     }
 
-    public LocalDate getEntryDate() {
-
-        return entryDate.get();
+    fun entryDateProperty(): ObjectProperty<LocalDate> {
+        return entryDate
     }
 
-    public void setEntryDate(final LocalDate date) {
-
-        entryDate.set(date);
+    fun getEntryOrder(): EntryOrder? {
+        return entryOrder.get()
     }
 
-    public ObjectProperty<LocalDate> entryDateProperty() {
-
-        return entryDate;
+    fun setEntryOrder(entryOrder: EntryOrder?) {
+        this.entryOrder.set(entryOrder)
     }
 
-    public EntryOrder getEntryOrder() {
-
-        return entryOrder.get();
+    fun entryOrderProperty(): SimpleObjectProperty<EntryOrder?> {
+        return entryOrder
     }
 
-    public void setEntryOrder(final EntryOrder entryOrder) {
-
-        this.entryOrder.set(entryOrder);
+    fun getAmount(): BigDecimal? {
+        return amount.get()
     }
 
-    public SimpleObjectProperty<EntryOrder> entryOrderProperty() {
-
-        return entryOrder;
+    fun setAmount(amount: BigDecimal?) {
+        this.amount.set(amount)
     }
 
-    public BigDecimal getAmount() {
-
-        return amount.get();
+    fun amountProperty(): ObjectProperty<BigDecimal?> {
+        return amount
     }
 
-    public void setAmount(final BigDecimal amount) {
-
-        this.amount.set(amount);
+    fun getSaving(): Boolean? {
+        return saving.get()
     }
 
-    public ObjectProperty<BigDecimal> amountProperty() {
-
-        return amount;
+    fun setSaving(saving: Boolean) {
+        this.saving.set(saving)
     }
 
-    public Boolean getSaving() {
-
-        return saving.get();
+    fun savingProperty(): ObjectProperty<Boolean?> {
+        return saving
     }
 
-    public void setSaving(final boolean saving) {
-
-        this.saving.set(saving);
+    fun getCategory(): String {
+        return category.get()
     }
 
-    public BooleanProperty savingProperty() {
-
-        return saving;
+    fun setCategory(category: String) {
+        this.category.set(category)
     }
 
-    public String getCategory() {
-
-        return category.get();
+    fun categoryProperty(): StringProperty {
+        return category
     }
 
-    public void setCategory(final String category) {
-
-        this.category.set(category);
+    fun getComment(): String {
+        return comment.get()
     }
 
-    public StringProperty categoryProperty() {
-
-        return category;
+    fun setComment(comment: String) {
+        this.comment.set(comment)
     }
 
-    public String getComment() {
-
-        return comment.get();
+    fun commentProperty(): StringProperty {
+        return comment
     }
 
-    public void setComment(final String comment) {
+    private inner class DateChangeListener : ChangeListener<LocalDate?> {
 
-        this.comment.set(comment);
-    }
+        override fun changed(observable: ObservableValue<out LocalDate?>, oldValue: LocalDate?, newValue: LocalDate?) {
 
-    public StringProperty commentProperty() {
+            // reflect the date change into the depending property (if possible)
+            val currentEntryOrder = entryOrder.get()
 
-        return comment;
-    }
+            if (newValue != null && currentEntryOrder != null) {
+                entryOrder.set(currentEntryOrder.update(newValue))
+            }
 
-    public boolean isGroupElement() {
-
-        return groupElement;
-    }
-
-    private final class DateChangeListener implements ChangeListener<LocalDate> {
-
-        @Override
-        public void changed(final ObservableValue<? extends LocalDate> observable, final LocalDate oldValue, final LocalDate newValue) {
-
-            // reflect the date change into the depending property
-            entryOrder.set(getEntryOrder().update(newValue));
         }
     }
 }

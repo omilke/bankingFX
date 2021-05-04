@@ -1,41 +1,39 @@
-package de.omilke.bankingfx;
+package de.omilke.bankingfx
 
-import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatter
 
-public class UIConstants {
+object UIConstants {
 
-    public static final double AMOUNT_WIDTH = 100;
-    public static final double CATEGORY_WIDTH = 250;
-    public static final double CATEGORY_COMPACT_WIDTH = 200;
-    public static final double COMMENT_WIDTH = 400;
-    public static final double COMMENT_COMPACT_WIDTH = 225;
-    public static final double COMMENT_IMPORT_WIDTH = 475;
-    public static final double ACTION_IMPORT_WIDTH = 100;
-    public static final double DATE_WIDTH = 100;
-    public static final double RECURRENCE_DATE_WIDTH = 150;
-    public static final double RECURRENCE_WIDTH = 100;
-    public static final double MONTH_WIDTH = 150;
-    public static final double SAVING_WIDTH = 75;
-    public static final double SEQUENCE_WIDTH = 50;
-    public static final double SECURITY_NAME_WIDTH = 350;
-    public static final double TRANSACTION_COUNT_WIDTH = 75;
+    const val AMOUNT_WIDTH = 100.0
+    const val CATEGORY_WIDTH = 250.0
+    const val CATEGORY_COMPACT_WIDTH = 200.0
+    const val COMMENT_WIDTH = 400.0
+    const val COMMENT_COMPACT_WIDTH = 225.0
+    const val COMMENT_IMPORT_WIDTH = 475.0
+    const val ACTION_IMPORT_WIDTH = 100.0
+    const val DATE_WIDTH = 100.0
+    const val RECURRENCE_DATE_WIDTH = 150.0
+    const val RECURRENCE_WIDTH = 100.0
+    const val MONTH_WIDTH = 150.0
+    const val SAVING_WIDTH = 75.0
+    const val SEQUENCE_WIDTH = 50.0
+    const val SECURITY_NAME_WIDTH = 350.0
+    const val TRANSACTION_COUNT_WIDTH = 75.0
 
-    public static final String POSITIVE = "positive";
-    public static final String NEGATIVE = "negative";
+    const val POSITIVE = "positive"
+    const val NEGATIVE = "negative"
+    const val ALIGN_LEFT = "left"
+    const val ALIGN_CENTER = "center"
+    const val ALIGN_RIGHT = "right"
 
-    public static final String ALIGN_LEFT = "left";
-    public static final String ALIGN_CENTER = "center";
-    public static final String ALIGN_RIGHT = "right";
+    const val CHART_TOOLTIP = "chart-tooltip"
 
-    public static final String CHART_TOOLTIP = "chart-tooltip";
+    val MONTH_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("MM / yyyy")
+    val MONTH_NAME_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("MMMM yyyy")
+    val MONTH_NAME_FORMATTER_FILENAME: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMM")
+    val DATE_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
 
-    public static final DateTimeFormatter MONTH_FORMATTER = DateTimeFormatter.ofPattern("MM / yyyy");
-    public static final DateTimeFormatter MONTH_NAME_FORMATTER = DateTimeFormatter.ofPattern("MMMM yyyy");
-    public static final DateTimeFormatter MONTH_NAME_FORMATTER_FILENAME = DateTimeFormatter.ofPattern("yyyyMM");
-    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-
-    public static String getCssUri() {
-        return UIConstants.class.getClassLoader().getResource("compiled-css/bankingfx.css").toExternalForm();
-    }
-
+    @Suppress("RECEIVER_NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
+    val cssUri: String
+        get() = UIConstants::class.java.classLoader.getResource("compiled-css/bankingfx.css").toExternalForm()
 }

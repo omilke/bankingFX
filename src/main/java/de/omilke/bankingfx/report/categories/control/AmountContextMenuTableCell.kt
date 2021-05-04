@@ -34,7 +34,7 @@ class AmountContextMenuTableCell(private val periodStart: YearMonth? = null, pri
                 val category = if (selectedRow!!.isAggregateRow) {
                     null
                 } else {
-                    selectedRow.categoryName
+                    selectedRow.getCategoryName()
                 }
 
                 val parent = this

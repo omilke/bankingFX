@@ -1,39 +1,29 @@
-package de.omilke.bankingfx.controls;
+package de.omilke.bankingfx.controls
 
-import javafx.util.StringConverter;
+import javafx.util.StringConverter
+import java.math.BigDecimal
+import java.text.DecimalFormat
+import java.text.ParseException
+import java.util.*
 
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.util.Locale;
+internal class BigDecimalStringConverter(private val locale: Locale) : StringConverter<BigDecimal?>() {
+    //TODO: locale really necessary - or just read from configuredLocale()?
 
-class BigDecimalStringConverter extends StringConverter<BigDecimal> {
 
-    private final Locale locale;
+    //TODO: nullable necessary
+    override fun toString(value: BigDecimal?): String {
 
-    public BigDecimalStringConverter(final Locale locale) {
-
-        this.locale = locale;
+        return UIUtils.formatAmount(value)
     }
 
-    @Override
-    public String toString(final BigDecimal object) {
+    override fun fromString(string: String): BigDecimal? {
 
-        return NumberFormat.getCurrencyInstance(locale).format(object);
-    }
-
-    @Override
-    public BigDecimal fromString(final String string) {
-
-        try {
-            final DecimalFormat df = (DecimalFormat) DecimalFormat.getNumberInstance(locale);
-            df.setParseBigDecimal(true);
-
-            return (BigDecimal) df.parse(string);
-        } catch (final ParseException e) {
-            return null;
+        return try {
+            val df = DecimalFormat.getNumberInstance(locale) as DecimalFormat
+            df.isParseBigDecimal = true
+            df.parse(string) as BigDecimal
+        } catch (e: ParseException) {
+            null
         }
     }
-
 }

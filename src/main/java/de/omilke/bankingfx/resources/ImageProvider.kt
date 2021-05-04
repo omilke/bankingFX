@@ -1,14 +1,14 @@
-package de.omilke.bankingfx.resources;
+package de.omilke.bankingfx.resources
 
-import javafx.scene.image.Image;
+import javafx.scene.image.Image
 
 /**
  * Created by olli on 27.11.2015.
  */
-public class ImageProvider {
+object ImageProvider {
 
-    public static Image readImageFromMetaInf(ImageType type) {
+    fun readImageFromMetaInf(type: ImageType): Image {
 
-        return new Image(ImageProvider.class.getClassLoader().getResourceAsStream("META-INF/img/" + type.getValue()));
+        return Image(ImageProvider::class.java.classLoader.getResourceAsStream("META-INF/img/" + type.value))
     }
 }

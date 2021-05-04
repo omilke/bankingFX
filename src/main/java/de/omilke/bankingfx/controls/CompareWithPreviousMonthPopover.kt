@@ -62,6 +62,7 @@ class CompareWithPreviousMonthPopover(month: YearMonth, category: String?) : Pop
         setupTables(matchEntries(entriesFirstMonth, entriesSecondMonth))
     }
 
+    //TODO: this actually is domain logic
     private fun matchEntries(entriesInEarlierMonth: List<Entry>, entriesOfLaterMonth: List<Entry>): MutableList<MatchingEntryPair> {
 
         val matchedEntries: MutableList<MatchingEntryPair> = ArrayList()
@@ -296,10 +297,7 @@ class CompareWithPreviousMonthPopover(month: YearMonth, category: String?) : Pop
 
     private fun getEntrySum(entries: List<Entry>): BigDecimal {
 
-        return entries
-                .stream()
-                .map(Entry::amount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add)
+        return entries.sumOf(Entry::amount)
     }
 
 }

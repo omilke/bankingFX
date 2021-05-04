@@ -9,12 +9,13 @@ import java.time.Month;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class EntryTest {
+public class EntryTableRowTest {
 
     @Test
     public void testUpdateEntryDate() {
 
-        final Entry cut = new Entry(LocalDate.of(2015, Month.AUGUST, 24), EntrySequence.REGULAR, 0, BigDecimal.ONE, false, "category", "comment");
+        LocalDate date = LocalDate.of(2015, Month.AUGUST, 24);
+        final EntryTableRow cut = new EntryTableRow(date, new EntryOrder(date, EntrySequence.REGULAR, 0), BigDecimal.ONE, false, "category", "comment", false);
 
         assertThat(cut.getEntryOrder().getOrder()).isEqualTo(2015_08_1_00_24L);
 

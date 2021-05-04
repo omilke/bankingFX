@@ -1,82 +1,70 @@
-package de.omilke.bankingfx.controls;
+package de.omilke.bankingfx.controls
 
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TableCell;
+import javafx.event.EventHandler
+import javafx.scene.control.DatePicker
+import javafx.scene.control.TableCell
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+class DateEditingCell<P>(private val formatter: DateTimeFormatter) : TableCell<P, LocalDate?>() {
 
-public class DateEditingCell<P> extends TableCell<P, LocalDate> {
+    //TODO: why lazily constructed?
+    private var datePicker: DatePicker? = null
 
-    private DatePicker datePicker;
+    override fun startEdit() {
 
-    private final DateTimeFormatter formatter;
+        if (!isEmpty) {
+            super.startEdit()
+            createDatePicker()
 
-    public DateEditingCell(final DateTimeFormatter formatter) {
+            displayEditControl(item)
 
-        this.formatter = formatter;
-    }
-
-    @Override
-    public void startEdit() {
-
-        if (!isEmpty()) {
-            super.startEdit();
-            createDatePicker();
-
-            displayEditControl(getItem());
-
-            this.datePicker.show();
+            datePicker!!.show()
         }
     }
 
-    @Override
-    public void cancelEdit() {
+    override fun cancelEdit() {
 
-        super.cancelEdit();
+        super.cancelEdit()
 
-        displayValue(getItem());
+        displayValue(item!!)
     }
 
-    @Override
-    public void updateItem(final LocalDate item, final boolean empty) {
+    override fun updateItem(item: LocalDate?, empty: Boolean) {
 
-        super.updateItem(item, empty);
+        super.updateItem(item, empty)
 
-        if (empty) {
-            setText(null);
-            setGraphic(null);
+        if (empty || item == null) {
+            text = null
+            setGraphic(null)
         } else {
-            if (isEditing()) {
-
-                displayEditControl(item);
+            if (isEditing) {
+                displayEditControl(item)
             } else {
-
-                displayValue(item);
+                displayValue(item)
             }
         }
     }
 
-    private void displayValue(final LocalDate item) {
+    private fun displayValue(item: LocalDate) {
 
-        setText(item.format(formatter));
-        setGraphic(null);
+        text = item.format(formatter)
+        graphic = null
     }
 
-    private void displayEditControl(final LocalDate item) {
+    private fun displayEditControl(item: LocalDate?) {
 
-        if (datePicker != null) {
-            datePicker.setValue(item);
+        datePicker?.let {
+            it.value = item
         }
 
-        setText(null);
-        setGraphic(datePicker);
+        text = null
+        graphic = datePicker
     }
 
-    private void createDatePicker() {
+    private fun createDatePicker() {
 
-        datePicker = new DatePicker(getItem());
-        datePicker.setOnAction((e) -> commitEdit(this.datePicker.getValue()));
+        datePicker = DatePicker(item)
+        datePicker!!.onAction = EventHandler { commitEdit(datePicker!!.value) }
     }
-
 }

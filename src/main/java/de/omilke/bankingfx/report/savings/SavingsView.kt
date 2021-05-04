@@ -1,161 +1,149 @@
-package de.omilke.bankingfx.report.savings;
+package de.omilke.bankingfx.report.savings
 
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import de.omilke.bankingfx.UIConstants;
-import de.omilke.bankingfx.controls.AmountTreeTableCell;
-import de.omilke.bankingfx.controls.UIUtils;
-import de.omilke.bankingfx.report.savings.model.Category;
-import de.omilke.bankingfx.report.savings.model.Entry;
-import de.saxsys.mvvmfx.Context;
-import de.saxsys.mvvmfx.FxmlView;
-import de.saxsys.mvvmfx.InjectContext;
-import de.saxsys.mvvmfx.InjectViewModel;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon
+import de.omilke.bankingfx.UIConstants
+import de.omilke.bankingfx.controls.AmountTreeTableCell
+import de.omilke.bankingfx.controls.ResizeableColumnCallback
+import de.omilke.bankingfx.controls.UIUtils.getIconWithColor
+import de.omilke.bankingfx.report.savings.model.Category
+import de.omilke.bankingfx.report.savings.model.Entry
+import de.saxsys.mvvmfx.Context
+import de.saxsys.mvvmfx.FxmlView
+import de.saxsys.mvvmfx.InjectContext
+import de.saxsys.mvvmfx.InjectViewModel
+import javafx.event.ActionEvent
+import javafx.fxml.FXML
+import javafx.scene.control.*
+import javafx.scene.paint.Color
+import java.math.BigDecimal
+import java.time.LocalDate
 
-import java.math.BigDecimal;
-import java.time.LocalDate;
-
-public class SavingsView implements FxmlView<SavingsModel> {
-
-    @FXML
-    CheckBox balancedCategories;
+class SavingsView : FxmlView<SavingsModel> {
 
     @FXML
-    TreeTableView<Entry> savingsTable;
+    lateinit var balancedCategories: CheckBox
+
+    @FXML
+    lateinit var savingsTable: TreeTableView<Entry>
 
     @InjectViewModel
-    private SavingsModel viewModel;
+    private lateinit var viewModel: SavingsModel
 
     @InjectContext
-    private Context context;
+    private lateinit var context: Context
 
-    public void initialize() {
+    fun initialize() {
 
-        savingsTable.setRoot(new TreeItem<>(new Entry()));
-        savingsTable.setColumnResizePolicy(param -> true);
-        savingsTable.setShowRoot(false);
+        savingsTable.columnResizePolicy = ResizeableColumnCallback()
+        savingsTable.root = TreeItem(Entry())
+        savingsTable.isShowRoot = false
 
-        this.setColumns();
+        setColumns()
 
-        this.displayModel(balancedCategories.isSelected());
+        displayModel(balancedCategories.isSelected)
     }
 
-    private void displayModel(boolean hideBalancedCategories) {
+    private fun displayModel(hideBalancedCategories: Boolean) {
 
-        savingsTable.getRoot().getChildren().clear();
+        savingsTable.root.children.clear()
 
-        for (final Category current : viewModel.getCategories()) {
+        for (current in viewModel.categories) {
 
             if (displayCategory(current, hideBalancedCategories)) {
 
-                TreeItem<Entry> currentRoot = new TreeItem<>(new Entry(current.getName(), current.getSum()));
-                this.savingsTable.getRoot().getChildren().add(currentRoot);
+                val currentRoot = TreeItem(Entry(current.name, current.sum))
+                currentRoot.isExpanded = false
 
-                currentRoot.setExpanded(false);
+                savingsTable.root.children.add(currentRoot)
 
-                for (Entry entry : current.getEntries()) {
-                    currentRoot.getChildren().add(new TreeItem<>(entry));
+                for (entry in current.entries) {
+                    currentRoot.children.add(TreeItem(entry))
                 }
             }
-
         }
     }
 
-    private boolean displayCategory(Category current, boolean hideBalancedCategories) {
+    private fun displayCategory(current: Category, hideBalancedCategories: Boolean): Boolean {
 
-        if (hideBalancedCategories && current.getSum().compareTo(BigDecimal.ZERO) == 0) {
-            return false;
-        } else {
-            return true;
+        return when {
+            hideBalancedCategories && current.sum.compareTo(BigDecimal.ZERO) == 0 -> false
+            else -> true
         }
     }
 
-    private void setColumns() {
+    private fun setColumns() {
 
-        final TreeTableColumn<Entry, String> groupLabelColumn = new TreeTableColumn<>("Category");
-        groupLabelColumn.setPrefWidth(UIConstants.CATEGORY_WIDTH);
-        groupLabelColumn.setCellValueFactory(param -> param.getValue().getValue().groupLabelProperty());
+        val groupLabelColumn = TreeTableColumn<Entry, String>("Category")
+        groupLabelColumn.prefWidth = UIConstants.CATEGORY_WIDTH
+        groupLabelColumn.setCellValueFactory { param -> param.value.value!!.groupLabelProperty() }
 
-        final TreeTableColumn<Entry, LocalDate> dateColumn = new TreeTableColumn<>("Date");
-        dateColumn.setPrefWidth(UIConstants.DATE_WIDTH);
-        dateColumn.getStyleClass().add("center");
-        dateColumn.setCellValueFactory(param -> param.getValue().getValue().entryDateProperty());
-        dateColumn.setCellFactory(column -> new TreeTableCell<>() {
+        //TODO: put date in Category column as in Security Transaction overview
+        val dateColumn = TreeTableColumn<Entry, LocalDate>("Date")
+        dateColumn.prefWidth = UIConstants.DATE_WIDTH
+        dateColumn.styleClass.add(UIConstants.ALIGN_CENTER)
+        dateColumn.setCellValueFactory { param -> param.value.value!!.entryDateProperty() }
+        dateColumn.setCellFactory {
+            object : TreeTableCell<Entry, LocalDate?>() {
+                override fun updateItem(item: LocalDate?, empty: Boolean) {
 
-            @Override
-            protected void updateItem(final LocalDate item, final boolean empty) {
+                    super.updateItem(item, empty)
 
-                super.updateItem(item, empty);
-
-                if (item == null || empty) {
-                    setText(null);
-                } else {
-                    setText(item.format(UIConstants.DATE_FORMATTER));
-                }
-
-            }
-        });
-
-        final TreeTableColumn<Entry, BigDecimal> amountColumn = new TreeTableColumn<>("Amount");
-        amountColumn.setPrefWidth(UIConstants.AMOUNT_WIDTH);
-        amountColumn.getStyleClass().add("right");
-        amountColumn.setCellValueFactory(param -> param.getValue().getValue().amountProperty());
-        amountColumn.setCellFactory(column -> new AmountTreeTableCell<>());
-
-        final TreeTableColumn<Entry, Boolean> savingColumn = new TreeTableColumn<>("Saving");
-        savingColumn.setPrefWidth(UIConstants.SAVING_WIDTH);
-        savingColumn.getStyleClass().add("center");
-        savingColumn.setCellValueFactory(param -> param.getValue().getValue().savingProperty());
-        savingColumn.setCellFactory(column -> new TreeTableCell<>() {
-
-            @Override
-            protected void updateItem(final Boolean item, final boolean empty) {
-
-                super.updateItem(item, empty);
-
-                final Entry rowItem = getTreeTableRow().getItem();
-                if (!empty && item != null && item && rowItem != null) {
-
-                    final BigDecimal amount = rowItem.getAmount();
-
-                    final Text icon;
-
-                    if (amount.compareTo(BigDecimal.ZERO) < 0) {
-                        icon = UIUtils.INSTANCE.getIconWithColor(FontAwesomeIcon.DOWNLOAD, Color.GREEN);
-                    } else {
-                        icon = UIUtils.INSTANCE.getIconWithColor(FontAwesomeIcon.UPLOAD, Color.RED);
+                    text = when {
+                        item == null || empty -> null
+                        else -> item.format(UIConstants.DATE_FORMATTER)
                     }
-
-                    setGraphic(icon);
-
-                } else {
-                    setGraphic(null);
                 }
-
             }
-        });
+        }
 
-        final TreeTableColumn<Entry, String> commentColumn = new TreeTableColumn<>("Comment");
-        commentColumn.setPrefWidth(UIConstants.COMMENT_WIDTH);
-        commentColumn.setCellValueFactory(param -> param.getValue().getValue().commentProperty());
+        val amountColumn = TreeTableColumn<Entry, BigDecimal>("Amount")
+        amountColumn.prefWidth = UIConstants.AMOUNT_WIDTH
+        amountColumn.styleClass.add(UIConstants.ALIGN_RIGHT)
+        amountColumn.setCellValueFactory { param -> param.value.value!!.amountProperty() }
+        amountColumn.setCellFactory { AmountTreeTableCell() }
 
-        savingsTable.getColumns().clear();
-        savingsTable.getColumns().add(groupLabelColumn);
-        savingsTable.getColumns().add(dateColumn);
-        savingsTable.getColumns().add(amountColumn);
-        savingsTable.getColumns().add(savingColumn);
-        savingsTable.getColumns().add(commentColumn);
+        val savingColumn = TreeTableColumn<Entry, Boolean>("Saving")
+        savingColumn.prefWidth = UIConstants.SAVING_WIDTH
+        savingColumn.styleClass.add(UIConstants.ALIGN_CENTER)
+        savingColumn.setCellValueFactory { param -> param.value.value!!.savingProperty() }
+        savingColumn.setCellFactory {
+            object : TreeTableCell<Entry?, Boolean>() {
+                override fun updateItem(item: Boolean?, empty: Boolean) {
+
+                    super.updateItem(item, empty)
+
+                    val rowItem = treeTableRow.item
+                    if (!empty && item != null && item && rowItem != null) {
+                        val amount = rowItem.getAmount()
+
+                        graphic = when {
+                            amount!! < BigDecimal.ZERO -> getIconWithColor(FontAwesomeIcon.DOWNLOAD, Color.GREEN)
+                            else -> getIconWithColor(FontAwesomeIcon.UPLOAD, Color.RED)
+                        }
+                    } else {
+
+                        graphic = null
+                    }
+                }
+            }
+        }
+
+        val commentColumn = TreeTableColumn<Entry?, String>("Comment")
+        commentColumn.prefWidth = UIConstants.COMMENT_WIDTH
+        commentColumn.setCellValueFactory { param -> param.value.value!!.commentProperty() }
+
+        savingsTable.columns.clear()
+        savingsTable.columns.add(groupLabelColumn)
+        savingsTable.columns.add(dateColumn)
+        savingsTable.columns.add(amountColumn)
+        savingsTable.columns.add(savingColumn)
+        savingsTable.columns.add(commentColumn)
     }
 
     @FXML
-    public void updateModel(ActionEvent actionEvent) {
+    fun updateModel(actionEvent: ActionEvent) {
 
-        CheckBox source = (CheckBox) actionEvent.getSource();
-        displayModel(source.isSelected());
+        val source = actionEvent.source as CheckBox
+        displayModel(source.isSelected)
     }
-
 }

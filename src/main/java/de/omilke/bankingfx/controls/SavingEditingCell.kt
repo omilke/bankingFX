@@ -1,99 +1,81 @@
-package de.omilke.bankingfx.controls;
+package de.omilke.bankingfx.controls
 
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import de.omilke.bankingfx.main.entrylist.model.Entry;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.TableCell;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon
+import de.omilke.bankingfx.controls.UIUtils.getIconWithColor
+import de.omilke.bankingfx.main.entrylist.model.EntryTableRow
+import javafx.event.EventHandler
+import javafx.scene.control.CheckBox
+import javafx.scene.control.TableCell
+import javafx.scene.paint.Color
+import java.math.BigDecimal
 
-import java.math.BigDecimal;
+class SavingEditingCell<P> : TableCell<P, Boolean?>() {
 
-public class SavingEditingCell<P> extends TableCell<P, Boolean> {
+    private val checkBox: CheckBox
 
-    private CheckBox checkBox;
+    init {
+        text = null
 
-    public SavingEditingCell() {
-
-        setText(null);
-        createComboBox();
-    }
-
-    @Override
-    public void startEdit() {
-
-        if (!isEmpty()) {
-            super.startEdit();
-
-            this.displayEditControl(getItem());
-
-            this.checkBox.requestFocus();
+        checkBox = CheckBox().apply {
+            this.onAction = EventHandler { commitEdit(this.selectedProperty().value) }
         }
     }
 
-    @Override
-    public void cancelEdit() {
+    override fun startEdit() {
 
-        super.cancelEdit();
+        if (!isEmpty) {
+            super.startEdit()
 
-        displayValue(getItem());
+            displayEditControl(item!!)
+
+            checkBox.requestFocus()
+        }
     }
 
-    @Override
-    public void updateItem(final Boolean item, final boolean empty) {
+    override fun cancelEdit() {
 
-        super.updateItem(item, empty);
+        super.cancelEdit()
 
-        if (empty) {
-            setGraphic(null);
+        displayValue(item)
+    }
+
+    override fun updateItem(item: Boolean?, empty: Boolean) {
+
+        super.updateItem(item, empty)
+
+        if (empty || item == null) {
+            setGraphic(null)
         } else {
-            if (isEditing()) {
 
-                displayEditControl(item);
+            if (isEditing) {
+                displayEditControl(item)
             } else {
-
-                displayValue(item);
+                displayValue(item)
             }
         }
     }
 
-    private void displayValue(final Boolean item) {
+    private fun displayValue(item: Boolean?) {
 
-        final Text icon;
-        if (item) {
+        graphic = when (item) {
+            true -> {
 
-            // this is a saving -> define the direction of the saving
-
-            final Entry rowItem = (Entry) getTableRow().getItem();
-            final BigDecimal amount = rowItem.getAmount();
-
-            if (amount.compareTo(BigDecimal.ZERO) < 0) {
-                icon = UIUtils.INSTANCE.getIconWithColor(FontAwesomeIcon.DOWNLOAD, Color.GREEN);
-
-            } else {
-                icon = UIUtils.INSTANCE.getIconWithColor(FontAwesomeIcon.UPLOAD, Color.RED);
+                // this is a saving -> define the direction of the saving
+                val amount = (tableRow.item as EntryTableRow).getAmount()
+                if (amount!! < BigDecimal.ZERO) {
+                    getIconWithColor(FontAwesomeIcon.DOWNLOAD, Color.GREEN)
+                } else {
+                    getIconWithColor(FontAwesomeIcon.UPLOAD, Color.RED)
+                }
             }
-        } else {
-            // not a saving -> no graphic
-            icon = null;
+            else -> null // not a saving (or null) -> no graphic
         }
-
-        setGraphic(icon);
     }
 
-    private void displayEditControl(final Boolean item) {
+    private fun displayEditControl(item: Boolean) {
 
-        if (checkBox != null) {
-            checkBox.setSelected(item);
-        }
-
-        setGraphic(checkBox);
-    }
-
-    private void createComboBox() {
-
-        checkBox = new CheckBox();
-        checkBox.setOnAction((e) -> commitEdit(checkBox.selectedProperty().getValue()));
+        checkBox.isSelected = item
+        graphic = checkBox
     }
 
 }

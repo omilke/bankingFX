@@ -1,54 +1,47 @@
-package de.omilke.bankingfx.report.savings;
+package de.omilke.bankingfx.report.savings
 
-import de.omilke.banking.account.entity.Entry;
-import de.omilke.banking.account.entity.EntryRepository;
-import de.omilke.banking.persistence.PersistenceServiceProvider;
-import de.omilke.bankingfx.report.savings.model.Category;
-import de.saxsys.mvvmfx.ViewModel;
+import de.omilke.banking.persistence.PersistenceServiceProvider.persistenceService
+import de.omilke.bankingfx.report.savings.model.Category
+import de.omilke.bankingfx.report.savings.model.Entry
+import de.saxsys.mvvmfx.ViewModel
+import java.util.*
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+class SavingsModel : ViewModel {
 
-public class SavingsModel implements ViewModel {
+    private val er = persistenceService.entryRepository
 
-    private EntryRepository er = PersistenceServiceProvider.INSTANCE.getPersistenceService().getEntryRepository();
+    val categories: MutableList<Category> = ArrayList()
 
-    private List<Category> categories = new ArrayList<>();
+    fun initialize() {
 
-    public List<Category> getCategories() {
-        return categories;
+        prepareModel()
     }
 
-    public void initialize() {
+    private fun prepareModel() {
 
-        prepareModel();
-    }
-
-    private void prepareModel() {
-
-        for (Entry current : er.findAllEntries()) {
-            if (current.isSaving()) {
-                var category = getFromProperty(current.getCategory());
-                category.addEntry(de.omilke.bankingfx.report.savings.model.Entry.fromStorageModel(current));
+        for (current in er.findAllEntries()) {
+            if (current.isSaving) {
+                val category = getFromProperty(current.category)
+                category.addEntry(Entry(current))
             }
         }
 
-        categories.sort(Comparator.comparing(Category::getSum).thenComparing(Category::getLowerCaseName));
+        //TODO: replace with kotlin comparator or even Comparable<Category>
+        categories.sortWith(Comparator.comparing { obj: Category -> obj.sum }.thenComparing { obj: Category -> obj.lowerCaseName })
     }
 
-    private Category getFromProperty(String name) {
+    private fun getFromProperty(name: String): Category {
 
-        for (Category category : categories) {
-            if (category.getName().equalsIgnoreCase(name)) {
-                return category;
+        for (category in categories) {
+
+            if (category.name.equals(name, ignoreCase = true)) {
+                return category
             }
         }
 
-        Category newCategory = new Category(name);
-        categories.add(newCategory);
+        val newCategory = Category(name)
+        categories.add(newCategory)
 
-        return newCategory;
+        return newCategory
     }
-
 }

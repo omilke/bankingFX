@@ -1,49 +1,36 @@
-package de.omilke.bankingfx.report.savings.model;
+package de.omilke.bankingfx.report.savings.model
 
-import java.math.BigDecimal;
-import java.util.Comparator;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.math.BigDecimal
+import java.util.*
 
-public class Category {
+class Category(val name: String) {
 
-    private final String name;
+    private var _sum = BigDecimal.ZERO
 
-    private BigDecimal sum = BigDecimal.ZERO;
-    private final SortedSet<Entry> entries = new TreeSet<>(ENTRY_COMPARATOR);
+    val sum: BigDecimal
+        get() = _sum
 
-    public Category(String name) {
-        this.name = name;
-    }
+    val entries: SortedSet<Entry> = TreeSet(ENTRY_COMPARATOR)
 
-    public void addEntry(Entry entry) {
+    fun addEntry(entry: Entry) {
 
-        entries.add(entry);
-        this.sum = this.sum.add(entry.getAmount());
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public SortedSet<Entry> getEntries() {
-        return entries;
-    }
-
-    public BigDecimal getSum() {
-        return sum;
+        entries.add(entry)
+        _sum = _sum.add(entry.getAmount())
     }
 
     /**
      * Provides the lowercase name for building a case-insensitive comparator.
      */
-    public String getLowerCaseName() {
-        return this.name.toLowerCase();
+    val lowerCaseName: String
+        get() = name.toLowerCase()
+
+    companion object {
+
+        //TODO: replace with kotlin comparators?
+        private val ENTRY_COMPARATOR =
+                Comparator
+                .comparing { obj: Entry -> obj.getEntryDate() }.reversed()
+                .thenComparing { obj: Entry -> obj.getAmount() }
+                .thenComparing { obj: Entry -> obj.getComment() }
     }
-
-    private static final Comparator<Entry> ENTRY_COMPARATOR = Comparator
-            .comparing(Entry::getEntryDate).reversed()
-            .thenComparing(Entry::getAmount)
-            .thenComparing(Entry::getComment);
-
 }

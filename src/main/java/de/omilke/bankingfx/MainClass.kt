@@ -1,11 +1,11 @@
-package de.omilke.bankingfx;
+package de.omilke.bankingfx
 
-public class MainClass {
+object MainClass {
 
-    public static void main(final String[] args) {
+    @JvmStatic
+    fun main(args: Array<String>) {
 
         //relay to a second "Main Class" in order to allow JavaFX fat jar packaging by hacking the Main Class check for JavaFX
-        BankingFxApplication.main(args);
+        BankingFxApplication.main(args)
     }
-
 }

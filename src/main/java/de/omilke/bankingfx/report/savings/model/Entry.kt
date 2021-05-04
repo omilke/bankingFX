@@ -1,100 +1,72 @@
-package de.omilke.bankingfx.report.savings.model;
+package de.omilke.bankingfx.report.savings.model
 
-import javafx.beans.property.*;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
+import javafx.beans.property.*
+import java.math.BigDecimal
+import java.time.LocalDate
+import de.omilke.banking.account.entity.Entry as domainEntry
 
 /**
  * @author Oliver Milke
  */
-public class Entry {
+class Entry {
 
-    private final ObjectProperty<LocalDate> entryDate;
-    private final ObjectProperty<BigDecimal> amount;
-    private final BooleanProperty saving;
-    private final StringProperty comment;
+    val category: String?
 
-    private final String category;
+    private val entryDate: ObjectProperty<LocalDate?>
+    private val amount: ObjectProperty<BigDecimal?>
+    private val saving: ObjectProperty<Boolean?>
+    private val comment: StringProperty
 
-    private final StringProperty groupLabel;
+    private val groupLabel: StringProperty
 
-    public Entry(final String groupLabel, BigDecimal sum) {
+    constructor(entry: domainEntry)
+            : this(entry.entryDate, entry.amount, entry.isSaving, entry.category, entry.comment)
 
-        this.entryDate = new SimpleObjectProperty<>(null);
-        this.saving = new SimpleBooleanProperty();
-        this.comment = new SimpleStringProperty(null);
+    constructor(groupLabel: String?, sum: BigDecimal?)
+            : this(null, sum, null, null, null, groupLabel)
 
-        this.category = null;
+    constructor(entryDate: LocalDate? = null, amount: BigDecimal? = null, saving: Boolean? = false, category: String? = null, comment: String? = null, groupLabel: String? = null) {
 
-        this.groupLabel = new SimpleStringProperty(groupLabel);
-        this.amount = new SimpleObjectProperty<>(sum);
+        this.category = category
+
+        this.entryDate = SimpleObjectProperty(entryDate)
+        this.amount = SimpleObjectProperty(amount)
+        this.saving = SimpleObjectProperty(saving)
+        this.comment = SimpleStringProperty(comment)
+        this.groupLabel = SimpleStringProperty(groupLabel)
     }
 
-    public Entry() {
-
-        this(null, null, false, null, null);
+    fun getEntryDate(): LocalDate? {
+        return entryDate.get()
     }
 
-    public Entry(final LocalDate entryDate, final BigDecimal amount, final boolean saving, final String category, final String comment) {
-
-        this.entryDate = new SimpleObjectProperty<>(entryDate);
-        this.amount = new SimpleObjectProperty<>(amount);
-        this.saving = new SimpleBooleanProperty(saving);
-        this.comment = new SimpleStringProperty(comment);
-
-        this.category = category;
-
-        this.groupLabel = new SimpleStringProperty(null);
+    fun entryDateProperty(): ObjectProperty<LocalDate?> {
+        return entryDate
     }
 
-    public LocalDate getEntryDate() {
-
-        return entryDate.get();
+    fun getAmount(): BigDecimal? {
+        return amount.get()
     }
 
-    public ObjectProperty<LocalDate> entryDateProperty() {
-
-        return entryDate;
+    fun amountProperty(): ObjectProperty<BigDecimal?> {
+        return amount
     }
 
-    public BigDecimal getAmount() {
-
-        return amount.get();
+    fun savingProperty(): ObjectProperty<Boolean?> {
+        return saving
     }
 
-    public ObjectProperty<BigDecimal> amountProperty() {
-
-        return amount;
+    fun getComment(): String {
+        return comment.get()
     }
 
-    public BooleanProperty savingProperty() {
-
-        return saving;
+    fun commentProperty(): StringProperty {
+        return comment
     }
 
-    public String getComment() {
-
-        return comment.get();
+    fun groupLabelProperty(): StringProperty {
+        return groupLabel
     }
 
-    public StringProperty commentProperty() {
-
-        return comment;
-    }
-
-    public String getCategory() {
-
-        return category;
-    }
-
-    public StringProperty groupLabelProperty() {
-
-        return groupLabel;
-    }
-
-    public static Entry fromStorageModel(de.omilke.banking.account.entity.Entry current) {
-
-        return new Entry(current.getEntryDate(), current.getAmount(), current.isSaving(), current.getCategory(), current.getComment());
-    }
 }
+

@@ -1,105 +1,90 @@
-package de.omilke.bankingfx.controls;
+package de.omilke.bankingfx.controls
 
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TextField;
-import javafx.scene.paint.Color;
+import javafx.event.EventHandler
+import javafx.scene.control.TableCell
+import javafx.scene.control.TextField
+import javafx.scene.paint.Color
+import java.math.BigDecimal
+import java.util.*
 
-import java.math.BigDecimal;
-import java.util.Locale;
+class AmountEditingCell<P>(locale: Locale) : TableCell<P, BigDecimal?>() {
 
-public class AmountEditingCell<P> extends TableCell<P, BigDecimal> {
+    private val converter: BigDecimalStringConverter
+    private var text: TextField = TextField()
 
-    private final BigDecimalStringConverter converter;
+    init {
+        createComboBox()
 
-    private TextField text;
-
-    public AmountEditingCell(final Locale locale) {
-
-        createComboBox();
-
-        this.converter = new BigDecimalStringConverter(locale);
+        converter = BigDecimalStringConverter(locale)
     }
 
-    @Override
-    public void startEdit() {
+    override fun startEdit() {
 
-        if (!isEmpty()) {
-            super.startEdit();
+        if (!isEmpty) {
+            super.startEdit()
 
-            this.displayEditControl(getItem());
+            displayEditControl(item)
 
-            this.text.requestFocus();
+            this.text.requestFocus()
         }
     }
 
-    @Override
-    public void cancelEdit() {
+    override fun cancelEdit() {
 
-        super.cancelEdit();
+        super.cancelEdit()
 
-        displayValue(getItem());
+        displayValue(item!!)
     }
 
-    @Override
-    public void updateItem(final BigDecimal item, final boolean empty) {
+    override fun updateItem(item: BigDecimal?, empty: Boolean) {
 
-        super.updateItem(item, empty);
+        super.updateItem(item, empty)
 
-        Object o = getTableRow().getItem();
-
-        if (empty || o == null) {
-            setGraphic(null);
-            setText(null);
+        if (empty || item == null) {
+            graphic = null
+            setText(null)
         } else {
-            if (isEditing()) {
-
-                displayEditControl(item);
+            if (isEditing) {
+                displayEditControl(item)
             } else {
-
-                displayValue(item);
+                displayValue(item)
             }
         }
     }
 
-    private void displayValue(final BigDecimal item) {
+    private fun displayValue(item: BigDecimal) {
 
-        setText(converter.toString(item));
+        setText(converter.toString(item))
 
-        if (item.compareTo(BigDecimal.ZERO) >= 0) {
-            setTextFill(Color.GREEN);
+        if (item >= BigDecimal.ZERO) {
+            setTextFill(Color.GREEN)
         } else {
-            setTextFill(Color.RED);
+            setTextFill(Color.RED)
         }
 
-        setGraphic(null);
-
+        graphic = null
     }
 
-    private void displayEditControl(final BigDecimal item) {
+    private fun displayEditControl(item: BigDecimal?) {
 
-        if (text != null) {
-            text.setText(converter.toString(item));
-        }
+        text.text = converter.toString(item)
 
-        setText(null);
-        setGraphic(text);
+        setText(null)
+        graphic = text
     }
 
-    private void createComboBox() {
+    private fun createComboBox() {
 
-        text = new TextField();
-        text.setOnAction((e) -> {
-            final String value = text.textProperty().getValue();
+        text.onAction = EventHandler {
+            val value = text.textProperty().value
 
-            final BigDecimal fromString = converter.fromString(value);
+            val fromString = converter.fromString(value)
 
             if (fromString != null) {
-                commitEdit(fromString);
+                commitEdit(fromString)
             } else {
-                cancelEdit();
+                cancelEdit()
             }
-
-        });
+        }
     }
-
 }

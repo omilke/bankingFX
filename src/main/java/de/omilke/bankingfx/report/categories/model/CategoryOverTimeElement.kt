@@ -1,125 +1,108 @@
-package de.omilke.bankingfx.report.categories.model;
+package de.omilke.bankingfx.report.categories.model
 
-import javafx.beans.property.*;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.List;
-import java.util.Objects;
+import javafx.beans.property.*
+import javafx.collections.FXCollections
+import javafx.collections.ObservableList
+import java.math.BigDecimal
+import java.math.RoundingMode
 
 /**
  * Created by Olli on 23.05.2017.
  */
-public class CategoryOverTimeElement {
+class CategoryOverTimeElement {
 
-    private final StringProperty categoryName;
+    private val categoryName: StringProperty
+    private val monthValues: ListProperty<BigDecimal?>
+    private val average: ObjectProperty<BigDecimal>
+    private val sum: ObjectProperty<BigDecimal>
 
-    private final ListProperty<BigDecimal> monthValues;
-    private final boolean aggregateRow;
+    val isAggregateRow: Boolean
 
-    private final ObjectProperty<BigDecimal> average;
-    private final ObjectProperty<BigDecimal> sum;
+    //TODO: nullable necessary?
+    //TODO: why OberserableList?
+    constructor(categoryName: String, monthValues: ObservableList<BigDecimal?>) :
+            this(categoryName, monthValues, false)
 
-    public CategoryOverTimeElement(String categoryName, ObservableList<BigDecimal> monthValues) {
+    private constructor(categoryName: String, monthValues: ObservableList<BigDecimal?>, aggregateRow: Boolean) {
 
-        this(categoryName, monthValues, false);
+        this.categoryName = SimpleStringProperty(this, null, categoryName)
+        this.monthValues = SimpleListProperty(this, "values", monthValues)
+
+        val monthSum = getSum(monthValues)
+        this.sum = SimpleObjectProperty(this, null, monthSum)
+        this.average = SimpleObjectProperty(this, null, getAverage(monthSum, monthValues.size))
+
+        isAggregateRow = aggregateRow
     }
 
-    private CategoryOverTimeElement(String categoryName, ObservableList<BigDecimal> monthValues, boolean aggregateRow) {
-
-        this.categoryName = new SimpleStringProperty(this, null, categoryName);
-        this.monthValues = new SimpleListProperty<>(this, "values", monthValues);
-        this.aggregateRow = aggregateRow;
-
-        BigDecimal summedAmount = getSum(monthValues);
-        sum = new SimpleObjectProperty<>(this, null, summedAmount);
-
-        //average based on the number of months spanned. That number includes months without expenditures but
-        // excludes months that have no expenditures at all (those month would be skipped as a column)
-        average = new SimpleObjectProperty<>(this, null, getAverage(summedAmount, monthValues.size()));
+    fun getCategoryName(): String {
+        return categoryName.get()
     }
 
-    private static BigDecimal getSum(ObservableList<BigDecimal> values) {
-
-        return values.stream()
-                .filter(Objects::nonNull)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    fun categoryNameProperty(): StringProperty {
+        return categoryName
     }
 
-    private static BigDecimal getAverage(BigDecimal sum, int size) {
-
-        return sum.divide(new BigDecimal(size), 2, RoundingMode.HALF_UP);
+    fun getMonthValues(): ObservableList<BigDecimal?> {
+        return monthValues.get()
     }
 
-    public String getCategoryName() {
-
-        return categoryName.get();
+    fun getAverage(): BigDecimal {
+        return average.get()
     }
 
-    public StringProperty categoryNameProperty() {
-
-        return categoryName;
+    fun averageProperty(): ObjectProperty<BigDecimal> {
+        return average
     }
 
-    public ObservableList<BigDecimal> getMonthValues() {
-
-        return monthValues.get();
+    fun getSum(): BigDecimal {
+        return sum.get()
     }
 
-    public BigDecimal getAverage() {
-
-        return average.get();
+    fun sumProperty(): ObjectProperty<BigDecimal> {
+        return sum
     }
 
-    public ObjectProperty<BigDecimal> averageProperty() {
+    companion object {
 
-        return average;
-    }
-
-    public BigDecimal getSum() {
-
-        return sum.get();
-    }
-
-    public ObjectProperty<BigDecimal> sumProperty() {
-
-        return sum;
-    }
-
-    public boolean isAggregateRow() {
-
-        return aggregateRow;
-    }
-
-    public static CategoryOverTimeElement buildSumOverTimeElement(List<CategoryOverTimeElement> categorySums) {
-
-        ObservableList<BigDecimal> monthSumsOverTime = FXCollections.observableArrayList();
-
-        //build sum by month (i. e. per element of value) over all model elements
-        for (CategoryOverTimeElement categoryOverTime : categorySums) {
-
-            ObservableList<BigDecimal> monthValues = categoryOverTime.getMonthValues();
-            for (int monthIndex = 0; monthIndex < monthValues.size(); monthIndex++) {
-
-                //if a month-column is missing, add it
-                if (monthSumsOverTime.size() < monthIndex + 1) {
-                    monthSumsOverTime.add(BigDecimal.ZERO);
-                }
-
-                BigDecimal presentlySummedValue = monthSumsOverTime.get(monthIndex);
-                BigDecimal categoryMonthValue = monthValues.get(monthIndex);
-
-                if (categoryMonthValue != null) {
-
-                    //replace old sum with the current value added on top if there is a sum for this category and month
-                    monthSumsOverTime.set(monthIndex, presentlySummedValue.add(categoryMonthValue));
-                }
-            }
+        private fun getSum(values: ObservableList<BigDecimal?>): BigDecimal {
+            return values
+                    .filterNotNull()
+                    .fold(BigDecimal.ZERO, BigDecimal::add)
         }
 
-        return new CategoryOverTimeElement("Sum", monthSumsOverTime, true);
+        private fun getAverage(sum: BigDecimal, size: Int): BigDecimal {
+            return sum.divide(BigDecimal(size), 2, RoundingMode.HALF_UP)
+        }
+
+        fun buildSumOverTimeElement(categorySums: List<CategoryOverTimeElement>): CategoryOverTimeElement {
+
+            val monthSumsOverTime = FXCollections.observableArrayList<BigDecimal>()
+
+            //build sum by month (i. e. per element of value) over all model elements
+            for (categoryOverTime in categorySums) {
+
+                val monthValues = categoryOverTime.getMonthValues()
+                for (monthIndex in monthValues.indices) {
+
+                    //if a month-column is missing, add it
+                    if (monthSumsOverTime.size < monthIndex + 1) {
+                        monthSumsOverTime.add(BigDecimal.ZERO)
+                    }
+
+                    val presentlySummedValue = monthSumsOverTime[monthIndex]
+                    val categoryMonthValue = monthValues[monthIndex]
+
+                    if (categoryMonthValue != null) {
+
+                        //replace old sum with the current value added on top if there is a sum for this category and month
+                        monthSumsOverTime[monthIndex] = presentlySummedValue.add(categoryMonthValue)
+                    }
+                }
+            }
+
+            return CategoryOverTimeElement("Sum", monthSumsOverTime, true)
+        }
     }
 
 }

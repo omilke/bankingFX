@@ -46,11 +46,13 @@ object UIUtils {
         } else {
             labeled.styleClass.add(UIConstants.ALIGN_RIGHT)
 
-            if (amount >= BigDecimal.ZERO) {
+            if (isPositive(amount)) {
                 labeled.styleClass.add(UIConstants.POSITIVE)
             } else {
                 labeled.styleClass.add(UIConstants.NEGATIVE)
             }
+
+            println(labeled.styleClass)
 
             labeled.text = formatAmount(amount)
         }

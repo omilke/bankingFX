@@ -1,22 +1,12 @@
-package de.omilke.bankingfx.main.sequenceeditor;
+package de.omilke.bankingfx.main.sequenceeditor
 
-public class InvalidEntryOrderException extends Exception {
+class InvalidEntryOrderException : Exception {
 
-    private static final long serialVersionUID = 1L;
+    constructor(orderIndex: Int) : super(formatMessage(orderIndex))
+    constructor(orderIndex: String?) : super(formatMessage(orderIndex))
 
-    public InvalidEntryOrderException(final int orderIndex) {
+}
 
-        super(formatMessage(orderIndex));
-    }
-
-    public InvalidEntryOrderException(final String orderIndex) {
-
-        super(formatMessage(orderIndex));
-    }
-
-    static String formatMessage(final Object orderIndex) {
-
-        return String.format("Invalid Order Index: %s", orderIndex);
-    }
-
+fun formatMessage(orderIndex: Any?): String {
+    return String.format("Invalid Order Index: %s", orderIndex)
 }

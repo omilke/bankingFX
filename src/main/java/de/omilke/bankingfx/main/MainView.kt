@@ -111,7 +111,7 @@ class MainView : FxmlView<MainModel?> {
 
         val scene = Scene(FluentViewLoader.fxmlView(clazz).load().view)
 
-        scene.stylesheets.add(UIConstants.getCssUri())
+        scene.stylesheets.add(UIConstants.cssUri)
 
         val stage = Stage()
         stage.icons.add(ImageProvider.readImageFromMetaInf(ImageType.CHART))

@@ -5,7 +5,6 @@ import de.omilke.banking.ConfigurationConstants
 import javafx.stage.FileChooser
 import javafx.stage.Window
 import java.io.File
-import java.util.*
 
 class DefaultFileChooser(initialFileName: String, private val window: Window, title: String, extensionFilter: FileChooser.ExtensionFilter) {
 
@@ -14,8 +13,8 @@ class DefaultFileChooser(initialFileName: String, private val window: Window, ti
     init {
         fileChooser.title = title
 
-        if (DEFAULT_LOCATION != null) {
-            fileChooser.initialDirectory = File(DEFAULT_LOCATION)
+        DEFAULT_LOCATION?.let {
+            fileChooser.initialDirectory = File(it)
         }
 
         fileChooser.extensionFilters += extensionFilter
@@ -23,14 +22,14 @@ class DefaultFileChooser(initialFileName: String, private val window: Window, ti
         fileChooser.initialFileName = initialFileName
     }
 
-    fun showSave(): Optional<File> {
+    fun showSave(): File? {
 
-        return Optional.ofNullable(fileChooser.showSaveDialog(window))
+        return fileChooser.showSaveDialog(window)
     }
 
-    fun showOpen(): Optional<File> {
+    fun showOpen(): File? {
 
-        return Optional.ofNullable(fileChooser.showOpenDialog(window))
+        return fileChooser.showOpenDialog(window)
     }
 
     companion object {

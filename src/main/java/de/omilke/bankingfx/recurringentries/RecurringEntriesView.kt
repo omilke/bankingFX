@@ -9,24 +9,23 @@ import de.omilke.banking.interop.exporting.jhaushalt.JHaushaltFormatter
 import de.omilke.banking.persistence.PersistenceServiceProvider
 import de.omilke.bankingfx.UIConstants
 import de.omilke.bankingfx.controls.DefaultFileChooser
+import de.omilke.bankingfx.controls.ResizeableColumnCallback
 import de.omilke.bankingfx.controls.UIUtils
 import de.omilke.bankingfx.main.entrylist.model.EntryOrder
+import de.omilke.bankingfx.main.entrylist.model.buildEntryOrder
 import de.omilke.bankingfx.recurringentries.control.SavingTableCell
-import de.omilke.bankingfx.recurringentries.model.entryOrder
 import de.saxsys.mvvmfx.Context
 import de.saxsys.mvvmfx.FxmlView
 import de.saxsys.mvvmfx.InjectContext
 import de.saxsys.mvvmfx.InjectViewModel
+import javafx.beans.binding.Bindings
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleObjectProperty
-import javafx.collections.ListChangeListener
 import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.stage.FileChooser
-import javafx.util.Callback
 import java.math.BigDecimal
 import java.time.LocalDate
-import java.util.stream.Collectors
 
 class RecurringEntriesView : FxmlView<RecurringEntriesModel> {
 
@@ -59,6 +58,8 @@ class RecurringEntriesView : FxmlView<RecurringEntriesModel> {
 
         prepareEntryTable()
 
+        entryCountLabel.textProperty().bind(Bindings.size(entryTable.items).asString())
+
         val recurringEntries = rer.findAllRecurringEntries()
         recurringEntryTable.items.addAll(recurringEntries)
 
@@ -70,202 +71,218 @@ class RecurringEntriesView : FxmlView<RecurringEntriesModel> {
 
     private fun initRecurringEntryTable() {
 
-        val sequenceColumn = TableColumn<RecurringEntry, EntrySequence>("")
-        sequenceColumn.prefWidth = UIConstants.SEQUENCE_WIDTH
-        sequenceColumn.styleClass.add(UIConstants.ALIGN_CENTER)
-        sequenceColumn.setCellValueFactory { SimpleObjectProperty(it.value.sequence) }
-        sequenceColumn.setCellFactory {
-            object : TableCell<RecurringEntry, EntrySequence>() {
+        recurringEntryTable.columnResizePolicy = ResizeableColumnCallback()
+        recurringEntryTable.isFocusTraversable = false
 
-                override fun updateItem(item: EntrySequence?, empty: Boolean) {
+        TableColumn<RecurringEntry, EntrySequence>("").apply {
+            prefWidth = UIConstants.SEQUENCE_WIDTH
+            styleClass.add(UIConstants.ALIGN_CENTER)
+            setCellValueFactory { SimpleObjectProperty(it.value.sequence) }
+            setCellFactory {
+                object : TableCell<RecurringEntry, EntrySequence>() {
 
-                    super.updateItem(item, empty)
+                    override fun updateItem(item: EntrySequence?, empty: Boolean) {
 
-                    graphic = when {
-                        item == null -> null
-                        empty -> null
-                        else -> when (item) {
-                            EntrySequence.FIRST -> UIUtils.getIcon(FontAwesomeIcon.CHEVRON_CIRCLE_UP)
-                            EntrySequence.LAST -> UIUtils.getIcon(FontAwesomeIcon.CHEVRON_CIRCLE_DOWN)
-                            else -> null
+                        super.updateItem(item, empty)
+
+                        graphic = when {
+                            empty || item == null -> null
+                            else -> when (item) {
+                                EntrySequence.FIRST -> UIUtils.getIcon(FontAwesomeIcon.CHEVRON_CIRCLE_UP)
+                                EntrySequence.LAST -> UIUtils.getIcon(FontAwesomeIcon.CHEVRON_CIRCLE_DOWN)
+                                else -> null
+                            }
                         }
                     }
                 }
             }
+        }.also {
+            recurringEntryTable.columns.add(it)
         }
 
-        recurringEntryTable.columns.add(sequenceColumn)
+        TableColumn<RecurringEntry, Int>("Order").apply {
+            prefWidth = UIConstants.SEQUENCE_WIDTH
+            styleClass.add(UIConstants.ALIGN_CENTER)
+            setCellValueFactory { SimpleObjectProperty(it.value.orderIndex) }
+        }.also {
+            recurringEntryTable.columns.add(it)
+        }
 
-        val orderIndexColumn = TableColumn<RecurringEntry, Int>("Order")
-        orderIndexColumn.prefWidth = UIConstants.SEQUENCE_WIDTH
-        orderIndexColumn.styleClass.add(UIConstants.ALIGN_CENTER)
-        orderIndexColumn.setCellValueFactory { SimpleObjectProperty(it.value.orderIndex) }
+        TableColumn<RecurringEntry, BigDecimal>("Amount").apply {
+            prefWidth = UIConstants.AMOUNT_WIDTH
+            setCellValueFactory { SimpleObjectProperty(it.value.amount) }
+            setCellFactory {
+                object : TableCell<RecurringEntry, BigDecimal>() {
 
-        recurringEntryTable.columns.add(orderIndexColumn)
+                    override fun updateItem(item: BigDecimal?, empty: Boolean) {
 
+                        super.updateItem(item, empty)
 
-        val amountColumn = TableColumn<RecurringEntry, BigDecimal>("Amount")
-        amountColumn.prefWidth = UIConstants.AMOUNT_WIDTH
-        amountColumn.setCellValueFactory { SimpleObjectProperty(it.value.amount) }
-        amountColumn.setCellFactory {
-            object : TableCell<RecurringEntry, BigDecimal>() {
-
-                override fun updateItem(item: BigDecimal?, empty: Boolean) {
-
-                    super.updateItem(item, empty)
-
-                    UIUtils.formatAmount(this, item, empty)
+                        UIUtils.formatAmount(this, item, empty)
+                    }
                 }
             }
+        }.also {
+            recurringEntryTable.columns.add(it)
         }
 
-        recurringEntryTable.columns.add(amountColumn)
+        TableColumn<RecurringEntry, Boolean>("Saving").apply {
+            prefWidth = UIConstants.SAVING_WIDTH
+            setCellValueFactory { SimpleBooleanProperty(it.value.isSaving) }
+            setCellFactory { SavingTableCell() }
+        }.also {
+            recurringEntryTable.columns.add(it)
+        }
 
-        val savingColumn = TableColumn<RecurringEntry, Boolean>("Saving")
-        savingColumn.prefWidth = UIConstants.SAVING_WIDTH
-        savingColumn.setCellValueFactory { SimpleBooleanProperty(it.value.isSaving) }
-        savingColumn.setCellFactory { SavingTableCell() }
-        recurringEntryTable.columns.add(savingColumn)
+        TableColumn<RecurringEntry, String>("Category").apply {
+            prefWidth = UIConstants.CATEGORY_COMPACT_WIDTH
+            setCellValueFactory { SimpleObjectProperty(it.value.category) }
+        }.also {
+            recurringEntryTable.columns.add(it)
+        }
 
-        val categoryColumn = TableColumn<RecurringEntry, String>("Category")
-        categoryColumn.prefWidth = UIConstants.CATEGORY_COMPACT_WIDTH
-        categoryColumn.setCellValueFactory { SimpleObjectProperty(it.value.category) }
-        recurringEntryTable.columns.add(categoryColumn)
+        TableColumn<RecurringEntry, String>("Comment").apply {
+            prefWidth = UIConstants.COMMENT_COMPACT_WIDTH
+            setCellValueFactory { SimpleObjectProperty(it.value.comment) }
+        }.also {
+            recurringEntryTable.columns.add(it)
+        }
 
-        val commentColumn = TableColumn<RecurringEntry, String>("Comment")
-        commentColumn.prefWidth = UIConstants.COMMENT_COMPACT_WIDTH
-        commentColumn.setCellValueFactory { SimpleObjectProperty(it.value.comment) }
-        recurringEntryTable.columns.add(commentColumn)
+        TableColumn<RecurringEntry, String>("Recurrence").apply {
+            prefWidth = UIConstants.RECURRENCE_WIDTH
+            styleClass.add(UIConstants.ALIGN_CENTER)
+            setCellValueFactory { SimpleObjectProperty(UIUtils.formatRecurrenceStrategy(it.value.recurrenceStrategy)) }
+        }.also {
+            recurringEntryTable.columns.add(it)
+        }
 
-        val recurrenceColumn = TableColumn<RecurringEntry, String>("Recurrence")
-        recurrenceColumn.prefWidth = UIConstants.RECURRENCE_WIDTH
-        recurrenceColumn.styleClass.add(UIConstants.ALIGN_CENTER)
-        recurrenceColumn.setCellValueFactory { SimpleObjectProperty(UIUtils.formatRecurrenceStrategy(it.value.recurrenceStrategy)) }
-        recurringEntryTable.columns.add(recurrenceColumn)
+        TableColumn<RecurringEntry, LocalDate>("Last Recurrence").apply {
+            prefWidth = UIConstants.RECURRENCE_DATE_WIDTH
+            setCellValueFactory { SimpleObjectProperty(it.value.lastRecurrence) }
+            setCellFactory {
+                object : TableCell<RecurringEntry, LocalDate>() {
 
-        val lastRecurrenceColumn = TableColumn<RecurringEntry, LocalDate>("Last Recurrence")
-        lastRecurrenceColumn.prefWidth = UIConstants.RECURRENCE_DATE_WIDTH
-        lastRecurrenceColumn.setCellValueFactory { SimpleObjectProperty(it.value.lastRecurrence) }
-        lastRecurrenceColumn.setCellFactory {
-            object : TableCell<RecurringEntry, LocalDate>() {
+                    override fun updateItem(item: LocalDate?, empty: Boolean) {
 
-                override fun updateItem(item: LocalDate?, empty: Boolean) {
+                        super.updateItem(item, empty)
 
-                    super.updateItem(item, empty)
-
-                    UIUtils.formatDate(this, item, empty)
+                        UIUtils.formatDate(this, item, empty)
+                    }
                 }
             }
+        }.also {
+            recurringEntryTable.columns.add(it)
         }
 
-        recurringEntryTable.columns.add(lastRecurrenceColumn)
+        TableColumn<RecurringEntry, LocalDate>("Start of Recurrence").apply {
+            prefWidth = UIConstants.RECURRENCE_DATE_WIDTH
+            setCellValueFactory { SimpleObjectProperty(it.value.startOfRecurrence) }
+            setCellFactory {
+                object : TableCell<RecurringEntry, LocalDate>() {
 
-        val startOfRecurrenceColumn = TableColumn<RecurringEntry, LocalDate>("Start of Recurrence")
-        startOfRecurrenceColumn.prefWidth = UIConstants.RECURRENCE_DATE_WIDTH
-        startOfRecurrenceColumn.setCellValueFactory { SimpleObjectProperty(it.value.startOfRecurrence) }
-        startOfRecurrenceColumn.setCellFactory {
-            object : TableCell<RecurringEntry, LocalDate>() {
+                    override fun updateItem(item: LocalDate?, empty: Boolean) {
 
-                override fun updateItem(item: LocalDate?, empty: Boolean) {
+                        super.updateItem(item, empty)
 
-                    super.updateItem(item, empty)
-
-                    UIUtils.formatDate(this, item, empty)
+                        UIUtils.formatDate(this, item, empty)
+                    }
                 }
             }
+        }.also {
+            recurringEntryTable.columns.add(it)
         }
-
-        recurringEntryTable.columns.add(startOfRecurrenceColumn)
-
-        recurringEntryTable.isFocusTraversable = false
     }
 
     private fun prepareEntryTable() {
 
-        entryTable.columnResizePolicy = Callback { true }
+        entryTable.columnResizePolicy = ResizeableColumnCallback()
+        entryTable.isFocusTraversable = false
 
-        val dateColumn = TableColumn<Entry, LocalDate>("Date")
-        dateColumn.prefWidth = UIConstants.DATE_WIDTH
-        dateColumn.setCellValueFactory { SimpleObjectProperty(it.value.entryDate) }
-        dateColumn.setCellFactory {
-            object : TableCell<Entry, LocalDate>() {
+        TableColumn<Entry, LocalDate>("Date").apply {
+            prefWidth = UIConstants.DATE_WIDTH
+            setCellValueFactory { SimpleObjectProperty(it.value.entryDate) }
+            setCellFactory {
+                object : TableCell<Entry, LocalDate>() {
 
-                override fun updateItem(item: LocalDate?, empty: Boolean) {
+                    override fun updateItem(item: LocalDate?, empty: Boolean) {
 
-                    super.updateItem(item, empty)
+                        super.updateItem(item, empty)
 
-                    UIUtils.formatDate(this, item, empty)
+                        UIUtils.formatDate(this, item, empty)
+                    }
                 }
             }
+        }.also {
+            entryTable.columns.add(it)
         }
 
-        entryTable.columns.add(dateColumn)
+        TableColumn<Entry, EntryOrder>("").apply {
+            prefWidth = UIConstants.SEQUENCE_WIDTH
+            styleClass.add(UIConstants.ALIGN_CENTER)
+            setCellValueFactory { SimpleObjectProperty(it.value.buildEntryOrder()) }
+            setCellFactory {
+                object : TableCell<Entry, EntryOrder>() {
 
-        val sequenceColumn = TableColumn<Entry, EntryOrder>("")
-        sequenceColumn.prefWidth = UIConstants.SEQUENCE_WIDTH
-        sequenceColumn.styleClass.add(UIConstants.ALIGN_CENTER)
-        sequenceColumn.setCellValueFactory { SimpleObjectProperty(it.value.entryOrder) }
-        sequenceColumn.setCellFactory {
-            object : TableCell<Entry, EntryOrder>() {
+                    override fun updateItem(item: EntryOrder?, empty: Boolean) {
+                        super.updateItem(item, empty)
 
-                override fun updateItem(item: EntryOrder?, empty: Boolean) {
-                    super.updateItem(item, empty)
-
-                    graphic = if (item == null || empty) {
-                        null
-                    } else {
-                        when (item.sequence) {
-                            EntrySequence.FIRST -> UIUtils.getIcon(FontAwesomeIcon.CHEVRON_CIRCLE_UP)
-                            EntrySequence.LAST -> UIUtils.getIcon(FontAwesomeIcon.CHEVRON_CIRCLE_DOWN)
-                            else -> null
+                        graphic = if (item == null || empty) {
+                            null
+                        } else {
+                            when (item.sequence) {
+                                EntrySequence.FIRST -> UIUtils.getIcon(FontAwesomeIcon.CHEVRON_CIRCLE_UP)
+                                EntrySequence.LAST -> UIUtils.getIcon(FontAwesomeIcon.CHEVRON_CIRCLE_DOWN)
+                                else -> null
+                            }
                         }
                     }
                 }
             }
+        }.also {
+            entryTable.columns.add(it)
+
         }
 
-        entryTable.columns.add(sequenceColumn)
+        TableColumn<Entry, BigDecimal>("Amount").apply {
+            prefWidth = UIConstants.AMOUNT_WIDTH
+            setCellValueFactory { SimpleObjectProperty(it.value.amount) }
+            setCellFactory {
+                object : TableCell<Entry, BigDecimal>() {
 
-        val amountColumn = TableColumn<Entry, BigDecimal>("Amount")
-        amountColumn.prefWidth = UIConstants.AMOUNT_WIDTH
-        amountColumn.setCellValueFactory { SimpleObjectProperty(it.value.amount) }
-        amountColumn.setCellFactory {
-            object : TableCell<Entry, BigDecimal>() {
+                    override fun updateItem(item: BigDecimal?, empty: Boolean) {
 
-                override fun updateItem(item: BigDecimal?, empty: Boolean) {
+                        super.updateItem(item, empty)
 
-                    super.updateItem(item, empty)
-
-                    UIUtils.formatAmount(this, item, empty)
+                        UIUtils.formatAmount(this, item, empty)
+                    }
                 }
             }
+        }.also {
+            entryTable.columns.add(it)
+
         }
 
-        entryTable.columns.add(amountColumn)
+        TableColumn<Entry, Boolean>("Saving").apply {
+            prefWidth = UIConstants.SAVING_WIDTH
+            setCellValueFactory { SimpleBooleanProperty(it.value.isSaving) }
+            setCellFactory { de.omilke.bankingfx.report.categories.control.SavingTableCell() }
+        }.also {
+            entryTable.columns.add(it)
+        }
 
-        val savingColumn = TableColumn<Entry, Boolean>("Saving")
-        savingColumn.prefWidth = UIConstants.SAVING_WIDTH
-        savingColumn.setCellValueFactory { SimpleBooleanProperty(it.value.isSaving) }
-        savingColumn.setCellFactory { de.omilke.bankingfx.report.categories.control.SavingTableCell() }
-        entryTable.columns.add(savingColumn)
+        TableColumn<Entry, String>("Category").apply {
+            prefWidth = UIConstants.CATEGORY_WIDTH
+            setCellValueFactory { SimpleObjectProperty(it.value.category) }
+        }.also {
+            entryTable.columns.add(it)
+        }
 
-        val categoryColumn = TableColumn<Entry, String>("Category")
-        categoryColumn.prefWidth = UIConstants.CATEGORY_WIDTH
-        categoryColumn.setCellValueFactory { SimpleObjectProperty(it.value.category) }
-        entryTable.columns.add(categoryColumn)
-
-        val commentColumn = TableColumn<Entry, String>("Comment")
-        commentColumn.prefWidth = UIConstants.COMMENT_WIDTH
-        commentColumn.setCellValueFactory { SimpleObjectProperty(it.value.comment) }
-        entryTable.columns.add(commentColumn)
-
-        entryTable.isFocusTraversable = false
-
-        entryTable.items.addListener(ListChangeListener {
-
-            entryCountLabel.text = it.list.size.toString()
-
-        })
+        TableColumn<Entry, String>("Comment").apply {
+            prefWidth = UIConstants.COMMENT_WIDTH
+            setCellValueFactory { SimpleObjectProperty(it.value.comment) }
+        }.also {
+            entryTable.columns.add(it)
+        }
     }
 
     private fun setupDateFilter() {
@@ -310,10 +327,11 @@ class RecurringEntriesView : FxmlView<RecurringEntriesModel> {
 
         val result = fileChooser.showSave()
 
-        if (result.isPresent) {
-
-            LinesWriter.saveLinesToFile(result.get(), exportConverted(entryTable.items))
+        result?.let {
+            LinesWriter.saveLinesToFile(it, exportConverted(entryTable.items))
         }
+
+        //TODO: a tiny feedback for user experience
     }
 
     private fun exportConverted(entriesToExport: List<Entry>): List<String> {
@@ -321,9 +339,7 @@ class RecurringEntriesView : FxmlView<RecurringEntriesModel> {
         val formatter = JHaushaltFormatter(true)
 
         return entriesToExport
-                .stream()
                 .map(formatter::format)
-                .collect(Collectors.toList())
 
     }
 

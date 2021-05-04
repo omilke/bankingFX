@@ -24,9 +24,7 @@ data class Security(
         get() = ArrayList(_transactions)
 
     val totalInvestedAmount: BigDecimal
-        get() = transactions
-                .map(SecurityTransaction::totalTransactionAmount)
-                .reduce(BigDecimal::add)
+        get() = transactions.sumOf(SecurityTransaction::totalTransactionAmount)
 
     val isClosedPosition
         get() = totalCount == 0

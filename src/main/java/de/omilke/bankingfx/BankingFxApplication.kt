@@ -1,39 +1,39 @@
-package de.omilke.bankingfx;
+package de.omilke.bankingfx
 
-import de.omilke.banking.interop.importing.Importer;
-import de.omilke.banking.persistence.PersistenceServiceProvider;
-import de.omilke.bankingfx.main.MainView;
-import de.omilke.bankingfx.resources.ImageProvider;
-import de.omilke.bankingfx.resources.ImageType;
-import de.saxsys.mvvmfx.FluentViewLoader;
-import javafx.application.Application;
-import javafx.scene.Scene;
-import javafx.stage.Stage;
+import de.omilke.banking.interop.importing.Importer.Companion.doImport
+import de.omilke.banking.persistence.PersistenceServiceProvider.persistenceService
+import de.omilke.bankingfx.main.MainView
+import de.omilke.bankingfx.resources.ImageProvider
+import de.omilke.bankingfx.resources.ImageType
+import de.saxsys.mvvmfx.FluentViewLoader
+import javafx.application.Application
+import javafx.scene.Scene
+import javafx.stage.Stage
 
-public class BankingFxApplication extends Application {
+class BankingFxApplication : Application() {
 
-    public static void main(String[] args) {
+    override fun start(stage: Stage) {
 
-        PersistenceServiceProvider.INSTANCE.getPersistenceService().checkPersistenceLayerReadiness();
+        val scene = Scene(FluentViewLoader.fxmlView(MainView::class.java).load().view)
+        scene.stylesheets.add(UIConstants.cssUri)
 
-        Importer.Companion.doImport();
+        stage.isMaximized = true
+        stage.title = "Banking.fx"
+        stage.icons.add(ImageProvider.readImageFromMetaInf(ImageType.MAIN))
+        stage.scene = scene
 
-        launch(args);
+        stage.show()
     }
 
-    @Override
-    public void start(final Stage stage) {
+    companion object {
 
-        final Scene scene = new Scene(FluentViewLoader.fxmlView(MainView.class).load().getView());
-        scene.getStylesheets().add(UIConstants.getCssUri());
+        @JvmStatic
+        fun main(args: Array<String>) {
 
-        stage.setMaximized(true);
-        stage.setTitle("Banking.fx");
-        stage.getIcons().add(ImageProvider.readImageFromMetaInf(ImageType.MAIN));
-        stage.setScene(scene);
+            persistenceService.checkPersistenceLayerReadiness()
+            doImport()
 
-        stage.show();
+            launch(BankingFxApplication::class.java, *args)
+        }
     }
-
-
 }
