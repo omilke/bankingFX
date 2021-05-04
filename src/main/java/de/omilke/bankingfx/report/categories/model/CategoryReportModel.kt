@@ -55,7 +55,7 @@ class CategoryReportModel(entries: List<Entry>) {
 
         for (category in categoriesWithExpenditure) {
 
-            val expenditureSums = FXCollections.observableArrayList<BigDecimal?>()
+            val expenditureSums = ArrayList<BigDecimal?>()
             for (yearMonth in yearMonthColumns) {
                 val key = CategoryKey(yearMonth, category)
                 expenditureSums.add(categoriesOverTimeMatrix.getOrDefault(key, null))
