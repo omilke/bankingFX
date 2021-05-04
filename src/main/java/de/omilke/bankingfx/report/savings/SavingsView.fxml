@@ -5,19 +5,18 @@
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.layout.*?>
-<AnchorPane prefHeight="400.0" prefWidth="1002.0" xmlns="http://javafx.com/javafx/10.0.2-internal"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.omilke.bankingfx.report.savings.SavingsView">
-    <children>
-        <VBox prefHeight="200.0" prefWidth="100.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
-              AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-            <HBox styleClass="top-control-bar">
-                <FontAwesomeIconView styleClass="filter-icon"/>
-                <CheckBox fx:id="balancedCategories" onAction="#updateModel" selected="true"
-                          text="Hide balanced categories"/>
-                <!-- this is just a hack to achieve same height / alignment with all the other top bars -->
-                <DatePicker visible="false"/>
-            </HBox>
-            <TreeTableView fx:id="savingsTable" showRoot="false" tableMenuButtonVisible="true"/>
-        </VBox>
-    </children>
+<AnchorPane xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="de.omilke.bankingfx.report.savings.SavingsView">
+    <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <HBox styleClass="top-control-bar">
+            <FontAwesomeIconView styleClass="filter-icon"/>
+            <CheckBox fx:id="balancedCategories" onAction="#updateModel" selected="true"
+                      text="Hide balanced categories"/>
+            <!-- this is just a hack to achieve same height / alignment with all the other top bars -->
+            <DatePicker visible="false"/>
+        </HBox>
+        <TreeTableView fx:id="savingsTable" showRoot="false" tableMenuButtonVisible="true"
+            VBox.vgrow="ALWAYS"/>
+    </VBox>
 </AnchorPane>

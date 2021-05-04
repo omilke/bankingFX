@@ -18,7 +18,6 @@ import java.text.DecimalFormat
 import java.time.LocalDate
 import java.util.function.Supplier
 
-
 object UIUtils {
 
     fun formatAmount(amount: BigDecimal?): String {
@@ -32,6 +31,11 @@ object UIUtils {
         percentInstance.minimumFractionDigits = digits
 
         return percentInstance.format(amount)
+    }
+
+    fun formatEntryDate(entryDate: LocalDate): String {
+
+        return entryDate.format(UIConstants.DATE_FORMATTER)
     }
 
     fun isPositive(amount: BigDecimal?): Boolean = amount != null && amount >= BigDecimal.ZERO
@@ -103,7 +107,7 @@ object UIUtils {
         if (item == null || empty) {
             cell.setText(null)
         } else {
-            cell.text = item.format(UIConstants.DATE_FORMATTER)
+            cell.text = formatEntryDate(item)
             cell.setAlignment(Pos.CENTER)
         }
     }
@@ -130,4 +134,5 @@ object UIUtils {
             "unknown strategy"
         }
     }
+
 }

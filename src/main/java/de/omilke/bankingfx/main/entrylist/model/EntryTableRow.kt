@@ -1,6 +1,7 @@
 package de.omilke.bankingfx.main.entrylist.model
 
 import de.omilke.banking.account.entity.Entry
+import de.omilke.bankingfx.UIConstants
 import javafx.beans.property.ObjectProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.beans.property.SimpleStringProperty
@@ -16,6 +17,7 @@ import java.time.LocalDate
  */
 class EntryTableRow {
 
+    private val description: StringProperty
     private val entryDate: ObjectProperty<LocalDate>
     private val entryOrder: SimpleObjectProperty<EntryOrder?>
     private val amount: ObjectProperty<BigDecimal?>
@@ -46,6 +48,12 @@ class EntryTableRow {
     constructor(entryDate: LocalDate, entryOrder: EntryOrder?, amount: BigDecimal?, saving: Boolean?, category: String?, comment: String?,
                 groupElement: Boolean) {
 
+        val description = when {
+            groupElement -> entryDate.format(UIConstants.MONTH_NAME_FORMATTER)
+            else -> entryDate.format(UIConstants.DATE_FORMATTER)
+        }
+
+        this.description = SimpleStringProperty(description)
         this.entryDate = SimpleObjectProperty(entryDate)
         this.entryDate.addListener(DateChangeListener())
         this.entryOrder = SimpleObjectProperty(entryOrder)
@@ -56,6 +64,10 @@ class EntryTableRow {
 
         isGroupElement = groupElement
     }
+
+    fun getDescription() = description.get()
+
+    fun getDescriptionProperty() = description
 
     fun getEntryDate(): LocalDate {
         return entryDate.get()

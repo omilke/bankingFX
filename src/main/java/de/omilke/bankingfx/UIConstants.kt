@@ -28,6 +28,10 @@ object UIConstants {
 
     const val CHART_TOOLTIP = "chart-tooltip"
 
+    const val DESCRIPTION_COLUMN: String = "description"
+    const val GROUP_ROW = "group-row"
+    const val AGGREGATE_ROW = "aggregate-row"
+
     val MONTH_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("MM / yyyy")
     val MONTH_NAME_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("MMMM yyyy")
     val MONTH_NAME_FORMATTER_FILENAME: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMM")

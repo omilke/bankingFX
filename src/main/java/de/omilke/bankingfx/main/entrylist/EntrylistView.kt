@@ -11,10 +11,8 @@ import de.omilke.bankingfx.controls.UIUtils.getIconWithColor
 import de.omilke.bankingfx.controls.extensions.atStartOfMonth
 import de.omilke.bankingfx.main.entrylist.model.EntryOrder
 import de.omilke.bankingfx.main.entrylist.model.EntryTableRow
-import de.omilke.bankingfx.main.entrylist.model.buildEntryOrder
 import de.saxsys.mvvmfx.FxmlView
 import javafx.fxml.FXML
-import javafx.geometry.Pos
 import javafx.scene.control.*
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
@@ -94,33 +92,24 @@ class EntrylistView : FxmlView<EntrylistModel> {
 
     private fun setColumns() {
 
-        val dateColumn = TreeTableColumn<EntryTableRow, LocalDate>("Date")
-        dateColumn.prefWidth = UIConstants.MONTH_WIDTH
-        dateColumn.setCellValueFactory { it.value.value.entryDateProperty() }
-        dateColumn.setCellFactory {
-            object : TreeTableCell<EntryTableRow, LocalDate?>() {
-                override fun updateItem(item: LocalDate?, empty: Boolean) {
+        entryTable.setRowFactory {
+            object : TreeTableRow<EntryTableRow?>() {
+                override fun updateItem(item: EntryTableRow?, empty: Boolean) {
 
                     super.updateItem(item, empty)
 
-                    if (empty || item == null) {
-                        text = null
-                    } else {
-                        val rowItem = treeTableRow.item
-                        val isGroupElement = rowItem.isGroupElement
-                        //TODO aligment could be solved via RowFactory + CSS
-                        //TODO content display could actually be decided by Model
-                        if (isGroupElement) {
-                            text = item.format(UIConstants.MONTH_NAME_FORMATTER)
-                            alignment = Pos.CENTER_LEFT
-                        } else {
-                            text = item.format(UIConstants.DATE_FORMATTER)
-                            alignment = Pos.CENTER
-                        }
+                    styleClass.removeAll(UIConstants.GROUP_ROW)
+                    if (!empty && item != null && item.isGroupElement) {
+                        styleClass.add(UIConstants.GROUP_ROW)
                     }
                 }
             }
         }
+
+        val dateColumn = TreeTableColumn<EntryTableRow, String>("Date")
+        dateColumn.prefWidth = UIConstants.MONTH_WIDTH
+        dateColumn.styleClass.add(UIConstants.DESCRIPTION_COLUMN)
+        dateColumn.setCellValueFactory { it.value.value.getDescriptionProperty() }
 
         val sequenceColumn = TreeTableColumn<EntryTableRow, EntryOrder?>("")
         sequenceColumn.prefWidth = UIConstants.SEQUENCE_WIDTH
@@ -132,14 +121,14 @@ class EntrylistView : FxmlView<EntrylistModel> {
 
                     super.updateItem(item, empty)
 
-                    if (empty || item == null) {
-                        graphic = null
+                    graphic = if (empty || item == null) {
+                        null
                     } else {
 
                         //TODO maybe this could be solved via RowFactory + CSS
                         // but that depends on the possibilities to really style the content with glyph font
                         //however, there should be an example with the search-bar styling
-                        graphic = when (item.sequence) {
+                        when (item.sequence) {
                             EntrySequence.FIRST -> getIcon(FontAwesomeIcon.CHEVRON_CIRCLE_UP)
                             EntrySequence.LAST -> getIcon(FontAwesomeIcon.CHEVRON_CIRCLE_DOWN)
                             else -> null
@@ -169,6 +158,8 @@ class EntrylistView : FxmlView<EntrylistModel> {
                     } else {
                         val amount = treeTableRow.item.getAmount()!!
 
+                        //TODO maybe this could be solved via RowFactory + CSS
+                        // but that depends on the possibilities to really style the content with glyph font
                         graphic = when {
                             amount < BigDecimal.ZERO -> getIconWithColor(FontAwesomeIcon.DOWNLOAD, Color.GREEN)
                             else -> getIconWithColor(FontAwesomeIcon.UPLOAD, Color.RED)
@@ -200,7 +191,6 @@ class EntrylistView : FxmlView<EntrylistModel> {
 
         fillTable(entries
                 .filter(this::matchFilter)
-                .toList()
         )
     }
 

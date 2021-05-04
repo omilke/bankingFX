@@ -7,36 +7,31 @@
 <?import java.net.URL?>
 <AnchorPane xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="de.omilke.bankingfx.main.entrylist.EntrylistView">
-    <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-          AnchorPane.topAnchor="0.0">
-        <children>
-            <HBox styleClass="top-control-bar">
-                <CustomTextField fx:id="filter" onKeyPressed="#handleEscape" onKeyReleased="#filter" prefWidth="200.0"
-                                 promptText="filter for">
-                    <left>
-                        <Label styleClass="searchBoxLabel">
-                            <graphic>
-                                <FontAwesomeIconView glyphName="FILTER" size="15"/>
-                            </graphic>
-                        </Label>
-                    </left>
-                </CustomTextField>
-                <Button fx:id="buttonCloseSearch" onAction="#clearFilter" styleClass="buttonSearchClose">
-                    <graphic>
-                        <FontAwesomeIconView glyphName="CLOSE" size="15"/>
-                    </graphic>
-                </Button>
-            </HBox>
-            <TreeTableView fx:id="entryTable" minWidth="-Infinity" showRoot="false" tableMenuButtonVisible="true"
-                           VBox.vgrow="ALWAYS">
-            </TreeTableView>
-            <HBox styleClass="bottom-status-bar">
-                <children>
-                    <Label text="Entries:"/>
-                    <Label fx:id="entryCountLabel"/>
-                </children>
-            </HBox>
-        </children>
+    <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+          AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <HBox styleClass="top-control-bar">
+            <CustomTextField fx:id="filter" onKeyPressed="#handleEscape" onKeyReleased="#filter" prefWidth="200.0"
+                             promptText="filter for">
+                <left>
+                    <Label styleClass="searchBoxLabel">
+                        <graphic>
+                            <FontAwesomeIconView glyphName="FILTER" size="15"/>
+                        </graphic>
+                    </Label>
+                </left>
+            </CustomTextField>
+            <Button fx:id="buttonCloseSearch" onAction="#clearFilter" styleClass="buttonSearchClose">
+                <graphic>
+                    <FontAwesomeIconView glyphName="CLOSE" size="15"/>
+                </graphic>
+            </Button>
+        </HBox>
+        <TreeTableView fx:id="entryTable" minWidth="-Infinity" showRoot="false" tableMenuButtonVisible="true"
+                       VBox.vgrow="ALWAYS"/>
+        <HBox styleClass="bottom-status-bar">
+            <Label text="Entries:"/>
+            <Label fx:id="entryCountLabel"/>
+        </HBox>
     </VBox>
 
     <stylesheets>

@@ -1,4 +1,5 @@
 @file:Suppress("JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE")
+
 package de.omilke.bankingfx.report.savings.model
 
 import org.assertj.core.api.Assertions
@@ -14,9 +15,9 @@ internal class SavingEntryComparatorTest {
         val earlyDate = LocalDate.of(2021, 5, 4)
         val laterDate = LocalDate.of(2021, 5, 6)
 
-        val earlyEntry = Entry(earlyDate, BigDecimal.ONE, false, "category", "commentA")
-        val sameDateEntry = Entry(earlyDate, BigDecimal.ONE, false, "category", "commentA")
-        val lateEntry = Entry(laterDate, BigDecimal.ONE, false, "category", "commentA")
+        val earlyEntry = Entry("", false, BigDecimal.ONE, earlyDate, false, "commentA")
+        val sameDateEntry = Entry("", false, BigDecimal.ONE, earlyDate, false, "commentA")
+        val lateEntry = Entry("", false, BigDecimal.ONE, laterDate, false, "commentA")
 
         val cut = SavingEntryComparator()
 
@@ -31,9 +32,9 @@ internal class SavingEntryComparatorTest {
 
         val earlyDate = LocalDate.of(2021, 5, 4)
 
-        val lowAmount = Entry(earlyDate, BigDecimal.ZERO, false, "category", "commentA")
-        val highAmount = Entry(earlyDate, BigDecimal.ONE, false, "category", "commentA")
-        val equallyLowAmount = Entry(earlyDate, BigDecimal.ZERO, false, "category", "commentA")
+        val lowAmount = Entry("", false, BigDecimal.ZERO, earlyDate, false, "commentA")
+        val highAmount = Entry("", false, BigDecimal.ONE, earlyDate, false, "commentA")
+        val equallyLowAmount = Entry("", false, BigDecimal.ZERO, earlyDate, false, "commentA")
 
         val cut = SavingEntryComparator()
 
@@ -48,9 +49,9 @@ internal class SavingEntryComparatorTest {
 
         val earlyDate = LocalDate.of(2021, 5, 4)
 
-        val lowComment = Entry(earlyDate, BigDecimal.ONE, false, "category", "commentA")
-        val highComment = Entry(earlyDate, BigDecimal.ONE, false, "category", "commentB")
-        val equallyLowComment = Entry(earlyDate, BigDecimal.ONE, false, "category", "commentA")
+        val lowComment = Entry("", false, BigDecimal.ONE, earlyDate, false, "commentA")
+        val highComment = Entry("", false, BigDecimal.ONE, earlyDate, false, "commentB")
+        val equallyLowComment = Entry("", false, BigDecimal.ONE, earlyDate, false, "commentA")
 
         val cut = SavingEntryComparator()
 
@@ -66,11 +67,11 @@ internal class SavingEntryComparatorTest {
         val earlyDate = LocalDate.of(2021, 5, 4)
         val laterDate = LocalDate.of(2021, 5, 6)
 
-        val laterEntryWithLowerAmount = Entry(laterDate, BigDecimal.ONE, false, "category", "commentB")
-        val earlierEntryWithHigherAmount = Entry(earlyDate, BigDecimal.ZERO, false, "category", "commentB")
+        val laterEntryWithLowerAmount = Entry("", false, BigDecimal.ONE, laterDate, false, "commentB")
+        val earlierEntryWithHigherAmount = Entry("", false, BigDecimal.ZERO, earlyDate, false, "commentB")
 
-        val laterEntryWithLowerComment = Entry(laterDate, BigDecimal.ZERO, false, "category", "commentA")
-        val earlierEntryWithHigherComment = Entry(earlyDate, BigDecimal.ZERO, false, "category", "commentB")
+        val laterEntryWithLowerComment = Entry("", false, BigDecimal.ZERO, laterDate, false, "commentA")
+        val earlierEntryWithHigherComment = Entry("", false, BigDecimal.ZERO, earlyDate, false, "commentB")
 
         val cut = SavingEntryComparator()
 
@@ -80,7 +81,5 @@ internal class SavingEntryComparatorTest {
         //descending by date => late is smaller
         Assertions.assertThat(cut.compare(laterEntryWithLowerComment, earlierEntryWithHigherComment)).isLessThan(0)
     }
-
-
 
 }

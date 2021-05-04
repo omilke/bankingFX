@@ -112,19 +112,22 @@ $warn: #FF851B;
   -fx-font-weight: bold;
 }
 
-#transactionTable {
+.tree-table-view {
 
   .tree-table-cell.description {
     -fx-alignment: center-right;
   }
 
-  .security-group .tree-table-cell {
-    //overwriting modena.css default with accent color at the bottom / top
-    -fx-border-color: derive($chart-accent, 75%) -fx-table-cell-border-color $chart-accent transparent;
-  }
+  .group-row {
 
-  .security-group .tree-table-cell.description {
-    -fx-alignment: center-left;
+    .tree-table-cell.description {
+      -fx-alignment: center-left;
+    }
+
+    .tree-table-cell {
+      //overwriting modena.css default with accent color at the bottom / top
+      -fx-border-color: derive($chart-accent, 75%) -fx-table-cell-border-color $chart-accent transparent;
+    }
   }
 }
 

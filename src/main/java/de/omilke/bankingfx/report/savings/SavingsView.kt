@@ -16,7 +16,6 @@ import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.scene.paint.Color
 import java.math.BigDecimal
-import java.time.LocalDate
 
 class SavingsView : FxmlView<SavingsModel> {
 
@@ -73,28 +72,24 @@ class SavingsView : FxmlView<SavingsModel> {
 
     private fun setColumns() {
 
-        val groupLabelColumn = TreeTableColumn<Entry, String>("Category")
-        groupLabelColumn.prefWidth = UIConstants.CATEGORY_WIDTH
-        groupLabelColumn.setCellValueFactory { param -> param.value.value!!.groupLabelProperty() }
-
-        //TODO: put date in Category column as in Security Transaction overview
-        val dateColumn = TreeTableColumn<Entry, LocalDate>("Date")
-        dateColumn.prefWidth = UIConstants.DATE_WIDTH
-        dateColumn.styleClass.add(UIConstants.ALIGN_CENTER)
-        dateColumn.setCellValueFactory { param -> param.value.value!!.entryDateProperty() }
-        dateColumn.setCellFactory {
-            object : TreeTableCell<Entry, LocalDate?>() {
-                override fun updateItem(item: LocalDate?, empty: Boolean) {
+        savingsTable.setRowFactory {
+            object : TreeTableRow<Entry?>() {
+                override fun updateItem(item: Entry?, empty: Boolean) {
 
                     super.updateItem(item, empty)
 
-                    text = when {
-                        item == null || empty -> null
-                        else -> item.format(UIConstants.DATE_FORMATTER)
+                    styleClass.removeAll(UIConstants.GROUP_ROW)
+                    if (!empty && item != null && item.isGroupElement) {
+                        styleClass.add(UIConstants.GROUP_ROW)
                     }
                 }
             }
         }
+
+        val groupLabelColumn = TreeTableColumn<Entry, String>("Category")
+        groupLabelColumn.prefWidth = UIConstants.CATEGORY_WIDTH
+        groupLabelColumn.styleClass.add(UIConstants.DESCRIPTION_COLUMN)
+        groupLabelColumn.setCellValueFactory { param -> param.value.value!!.descriptionProperty() }
 
         val amountColumn = TreeTableColumn<Entry, BigDecimal>("Amount")
         amountColumn.prefWidth = UIConstants.AMOUNT_WIDTH
@@ -114,7 +109,7 @@ class SavingsView : FxmlView<SavingsModel> {
 
                     val rowItem = treeTableRow.item
                     if (!empty && item != null && item && rowItem != null) {
-                        val amount = rowItem.getAmount()
+                        val amount = rowItem.amountProperty().get()
 
                         graphic = when {
                             amount!! < BigDecimal.ZERO -> getIconWithColor(FontAwesomeIcon.DOWNLOAD, Color.GREEN)
@@ -134,7 +129,6 @@ class SavingsView : FxmlView<SavingsModel> {
 
         savingsTable.columns.clear()
         savingsTable.columns.add(groupLabelColumn)
-        savingsTable.columns.add(dateColumn)
         savingsTable.columns.add(amountColumn)
         savingsTable.columns.add(savingColumn)
         savingsTable.columns.add(commentColumn)

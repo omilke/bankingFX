@@ -77,15 +77,14 @@ class TransactionView : FxmlView<TransactionModel> {
         transactionTable.setRowFactory {
             object : TreeTableRow<TransactionTableRow?>() {
                 override fun updateItem(item: TransactionTableRow?, empty: Boolean) {
+
                     super.updateItem(item, empty)
 
-                    if (empty || item == null) {
-                        styleClass.removeAll("security-group", "transaction-aggregate")
-                    } else {
-                        if (item.parentElement) {
-                            styleClass.add("security-group")
-                        } else if (item.aggregateElement) {
-                            styleClass.add("transaction-aggregate")
+                    styleClass.removeAll("security-group", "transaction-aggregate")
+                    if (!empty && item != null) {
+                        when {
+                            item.parentElement -> styleClass.add(UIConstants.GROUP_ROW)
+                            item.aggregateElement -> styleClass.add(UIConstants.AGGREGATE_ROW)
                         }
                     }
                 }

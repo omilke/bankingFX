@@ -15,7 +15,7 @@ class Category(val name: String) : Comparable<Category> {
     fun addEntry(entry: Entry) {
 
         entries.add(entry)
-        _sum = _sum.add(entry.getAmount())
+        _sum = _sum.add(entry.amountProperty().get())
     }
 
     /**

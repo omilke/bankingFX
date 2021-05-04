@@ -1,72 +1,73 @@
 package de.omilke.bankingfx.report.savings.model
 
+import de.omilke.bankingfx.controls.UIUtils
 import javafx.beans.property.*
 import java.math.BigDecimal
 import java.time.LocalDate
 import de.omilke.banking.account.entity.Entry as domainEntry
 
-/**
- * @author Oliver Milke
- */
+//TODO: unify with EntryTableRow, which in the end is the same thing (maybe differently constructed)
 class Entry {
 
-    val category: String?
-
+    private val description: StringProperty
     private val entryDate: ObjectProperty<LocalDate?>
     private val amount: ObjectProperty<BigDecimal?>
     private val saving: ObjectProperty<Boolean?>
     private val comment: StringProperty
 
-    private val groupLabel: StringProperty
+    val isGroupElement: Boolean
+
+    constructor()
+            : this("", true)
 
     constructor(entry: domainEntry)
-            : this(entry.entryDate, entry.amount, entry.isSaving, entry.category, entry.comment)
+            : this(UIUtils.formatEntryDate(entry.entryDate), false, entry.amount, entry.entryDate, entry.isSaving, entry.comment)
 
-    constructor(groupLabel: String?, sum: BigDecimal?)
-            : this(null, sum, null, null, null, groupLabel)
+    constructor(groupLabel: String, sum: BigDecimal?)
+            : this(groupLabel, true, sum)
 
-    constructor(entryDate: LocalDate? = null, amount: BigDecimal? = null, saving: Boolean? = false, category: String? = null, comment: String? = null, groupLabel: String? = null) {
+    constructor(description: String,
+                groupElement: Boolean,
+                amount: BigDecimal? = null,
+                entryDate: LocalDate? = null,
+                saving: Boolean? = null,
+                comment: String? = null) {
 
-        this.category = category
+        this.description = SimpleStringProperty(description)
 
         this.entryDate = SimpleObjectProperty(entryDate)
         this.amount = SimpleObjectProperty(amount)
         this.saving = SimpleObjectProperty(saving)
         this.comment = SimpleStringProperty(comment)
-        this.groupLabel = SimpleStringProperty(groupLabel)
+
+        this.isGroupElement = groupElement
     }
 
-    fun getEntryDate(): LocalDate? {
-        return entryDate.get()
+    fun descriptionProperty(): StringProperty {
+        return description
     }
 
     fun entryDateProperty(): ObjectProperty<LocalDate?> {
         return entryDate
     }
 
-    fun getAmount(): BigDecimal? {
-        return amount.get()
-    }
+    fun getEntryDate() = entryDateProperty().get()
 
     fun amountProperty(): ObjectProperty<BigDecimal?> {
         return amount
     }
 
+    fun getAmount() = amount.get()
+
     fun savingProperty(): ObjectProperty<Boolean?> {
         return saving
-    }
-
-    fun getComment(): String {
-        return comment.get()
     }
 
     fun commentProperty(): StringProperty {
         return comment
     }
 
-    fun groupLabelProperty(): StringProperty {
-        return groupLabel
-    }
+    fun getComment() = comment.get()
 
 }
 
