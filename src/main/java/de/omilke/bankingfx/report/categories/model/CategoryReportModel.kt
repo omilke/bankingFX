@@ -3,7 +3,6 @@ package de.omilke.bankingfx.report.categories.model
 import de.omilke.banking.BankingConfigurator
 import de.omilke.banking.account.entity.Entry
 import de.omilke.util.DurationProvider
-import javafx.collections.FXCollections
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import java.math.BigDecimal

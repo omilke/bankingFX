@@ -126,12 +126,10 @@ object UIUtils {
 
     fun formatRecurrenceStrategy(strategy: RecurrenceStrategy?): String {
 
-        return if (strategy is EndOfMonthRecurrence) {
-            "End of Month"
-        } else if (strategy is StartOfMonthRecurrence) {
-            "Start of Month"
-        } else {
-            "unknown strategy"
+        return when (strategy) {
+            is EndOfMonthRecurrence -> "End of Month"
+            is StartOfMonthRecurrence -> "Start of Month"
+            else -> "unknown strategy"
         }
     }
 

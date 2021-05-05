@@ -18,7 +18,7 @@ fun TabPane.prepareLazilyLoadingTabs(views: Map<String, ViewDescriptor>) {
         this.tabs.add(newTab)
     }
 
-    this.selectionModel.clearSelection();
+    this.selectionModel.clearSelection()
     this.selectionModel.selectedItemProperty().addListener(LazyTabLoadListener(views))
     this.selectionModel.selectFirst()
 }

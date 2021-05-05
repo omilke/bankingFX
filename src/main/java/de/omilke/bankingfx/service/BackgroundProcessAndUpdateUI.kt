@@ -24,16 +24,15 @@ class BackgroundProcessAndUpdateUI<R>(private val task: Task<R>, private val upd
 
     }
 
-    companion object
+    companion object {
 
-    private
+        private val es: ExecutorService by lazy {
 
-    val es: ExecutorService by lazy {
-
-        Executors.newCachedThreadPool {
-            Thread(it).apply {
-                //creating daemon threads in the ThreadPool doesn't prevent the application shutdown
-                isDaemon = true
+            Executors.newCachedThreadPool {
+                Thread(it).apply {
+                    //creating daemon threads in the ThreadPool doesn't prevent the application shutdown
+                    isDaemon = true
+                }
             }
         }
     }

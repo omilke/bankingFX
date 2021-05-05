@@ -115,7 +115,7 @@ class JooqQueryExecutor(private val jooqContext: JooqContext) {
                 .map(RecurringEntryMapper)
     }
 
-    fun getSumsByMonthAndCategory(start: LocalDate?, end: LocalDate?): Result<Record5<String?, Int?, Int?, BigDecimal, String>>? {
+    fun getSumsByMonthAndCategory(start: LocalDate?, end: LocalDate?): Result<Record5<String?, Int?, Int?, BigDecimal, String>> {
 
         val whereCondition = buildWhereCondition(start, end, null)
 

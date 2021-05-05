@@ -14,15 +14,14 @@ import de.omilke.bankingfx.controls.DateEditingCell
 import de.omilke.bankingfx.controls.DefaultFileChooser
 import de.omilke.bankingfx.controls.SavingEditingCell
 import de.omilke.bankingfx.controls.UIUtils.getIcon
-import de.omilke.bankingfx.main.entrylist.model.EntryTableRow
 import de.omilke.bankingfx.main.entrylist.model.EntryOrder
+import de.omilke.bankingfx.main.entrylist.model.EntryTableRow
 import de.omilke.bankingfx.main.sequenceeditor.SequenceeditorView
 import de.omilke.bankingfx.main.sequenceeditor.model.EntryOrderSetting
 import de.saxsys.mvvmfx.FxmlView
 import javafx.beans.binding.Bindings
 import javafx.beans.property.SimpleBooleanProperty
 import javafx.collections.FXCollections
-import javafx.collections.ListChangeListener
 import javafx.collections.ObservableList
 import javafx.event.ActionEvent
 import javafx.event.EventHandler
@@ -219,7 +218,7 @@ class ConverterView : FxmlView<ConverterModel> {
         commentColumn.prefWidth = UIConstants.COMMENT_IMPORT_WIDTH
         commentColumn.styleClass.add(UIConstants.ALIGN_LEFT)
         commentColumn.setCellValueFactory { param -> param.value!!.commentProperty() }
-        commentColumn.setCellFactory(TextFieldTableCell.forTableColumn())
+        commentColumn.cellFactory = TextFieldTableCell.forTableColumn()
         commentColumn.setOnEditCommit { e: TableColumn.CellEditEvent<EntryTableRow?, String> -> e.tableView.items[e.tablePosition.row]!!.setComment(e.newValue) }
 
         val buttonBarCell = TableColumn<EntryTableRow, Boolean>("")

@@ -12,18 +12,9 @@ object JooqPersistenceService : PersistenceService {
 
     private val queryExecutor = JooqQueryExecutor()
 
-    private val _entryRepository = EntryRepositoryJooq()
-    private val _recurringEntryRepository = RecurringEntryRepositoryJooq()
-    private val _securityRepository = SecurityRepositoryHardCoded()
-
-    override val entryRepository: EntryRepository
-        get() = _entryRepository
-
-    override val recurringEntryRepository: RecurringEntryRepository
-        get() = _recurringEntryRepository
-
-    override val securityRepository: SecurityRepository
-        get() = _securityRepository
+    override val entryRepository: EntryRepository = EntryRepositoryJooq()
+    override val recurringEntryRepository: RecurringEntryRepository = RecurringEntryRepositoryJooq()
+    override val securityRepository: SecurityRepository = SecurityRepositoryHardCoded()
 
     override fun checkPersistenceLayerReadiness() {
 
