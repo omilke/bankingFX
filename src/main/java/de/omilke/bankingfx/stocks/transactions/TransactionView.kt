@@ -1,5 +1,6 @@
 package de.omilke.bankingfx.stocks.transactions
 
+import de.omilke.banking.interop.exporting.LinesWriter
 import de.omilke.banking.persistence.PersistenceServiceProvider
 import de.omilke.bankingfx.UIConstants
 import de.omilke.bankingfx.controls.AmountTreeTableCell
@@ -8,20 +9,28 @@ import de.omilke.bankingfx.controls.UIUtils
 import de.omilke.bankingfx.stocks.transactions.model.TransactionTableRow
 import de.saxsys.mvvmfx.FxmlView
 import javafx.fxml.FXML
+import javafx.scene.chart.PieChart
 import javafx.scene.control.TreeItem
 import javafx.scene.control.TreeTableColumn
 import javafx.scene.control.TreeTableRow
 import javafx.scene.control.TreeTableView
 import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import yahoofinance.YahooFinance
+import java.io.IOException
 import java.math.BigDecimal
 
 class TransactionView : FxmlView<TransactionModel> {
+
+    private val LOGGER: Logger = LogManager.getLogger(TransactionView.javaClass)
 
     private val sr = PersistenceServiceProvider.persistenceService.securityRepository
 
     @FXML
     private lateinit var transactionTable: TreeTableView<TransactionTableRow>
+
+    @FXML
+    private lateinit var investmentsChart: PieChart
 
     fun initialize() {
 
@@ -33,38 +42,45 @@ class TransactionView : FxmlView<TransactionModel> {
 
     private fun displaySecurities() {
 
-        for (security in sr.findAllSecurity()) {
+        try {
 
-            val currentRoot = TreeItem(TransactionTableRow(security))
-            currentRoot.isExpanded = true
+            for (security in sr.findAllSecurity()) {
 
-            for (transaction in security.transactions) {
-                currentRoot.children.add(TreeItem(TransactionTableRow(transaction)))
-            }
+                val currentRoot = TreeItem(TransactionTableRow(security))
+                currentRoot.isExpanded = true
 
-            val totalInvestedAmount = security.totalInvestedAmount
+                for (transaction in security.transactions) {
+                    currentRoot.children.add(TreeItem(TransactionTableRow(transaction)))
+                }
 
-            if (security.transactions.size > 1) {
-                val aggregateElement = TreeItem(TransactionTableRow("Sum", security.totalCount, totalInvestedAmount))
-                currentRoot.children.add(aggregateElement)
-            }
+                val totalInvestedAmount = security.totalInvestedAmount
 
-            //TODO: make fetching data optional and in background
-            if (!security.isClosedPosition) {
-
-                val quote = YahooFinance.get(security.referenceTicker)?.quote
-                quote?.let {
-                    val aggregateElement = TreeItem(TransactionTableRow("Change", security.updateCurrentPrice(it.price)))
+                if (security.transactions.size > 1) {
+                    val aggregateElement = TreeItem(TransactionTableRow("Sum", security.totalCount, totalInvestedAmount))
                     currentRoot.children.add(aggregateElement)
                 }
 
-                //TODO: include projection about sale including sell provision, if given
+                //TODO: make fetching data optional and in background and in a service outside of view
+                if (!security.isClosedPosition) {
+
+                    val quote = YahooFinance.get(security.referenceTicker)?.quote
+                    quote?.let {
+                        val aggregateElement = TreeItem(TransactionTableRow("Change", security.updateCurrentPrice(it.price)))
+                        currentRoot.children.add(aggregateElement)
+                    }
+
+                    //TODO: include projection about sale including sell provision, if given
+                }
+
+                this.transactionTable.root.children.add(currentRoot)
+
+                investmentsChart.data.add(PieChart.Data(security.name, totalInvestedAmount.toDouble()))
             }
 
-            this.transactionTable.root.children.add(currentRoot)
+            //TODO: display sum of portfolio
+        } catch (e: IOException) {
+            LOGGER.warn("Connection to finance API could be not be established:", e)
         }
-
-        //TODO: display sum of portfolio
     }
 
     private fun setupControls() {
