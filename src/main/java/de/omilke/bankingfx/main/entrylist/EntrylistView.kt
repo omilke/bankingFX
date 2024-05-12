@@ -156,7 +156,7 @@ class EntrylistView : FxmlView<EntrylistModel> {
                     if (empty || item == null || !item) {
                         graphic = null
                     } else {
-                        val amount = treeTableRow.item.getAmount()!!
+                        val amount = tableRow.item.getAmount()!!
 
                         //TODO maybe this could be solved via RowFactory + CSS
                         // but that depends on the possibilities to really style the content with glyph font

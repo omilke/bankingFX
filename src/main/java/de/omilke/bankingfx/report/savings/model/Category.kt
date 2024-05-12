@@ -22,7 +22,7 @@ class Category(val name: String) : Comparable<Category> {
      * Provides the lowercase name for building a case-insensitive comparator.
      */
     private val lowerCaseName: String
-        get() = name.toLowerCase()
+        get() = name.lowercase(Locale.getDefault())
 
     override fun compareTo(other: Category): Int {
         return compareValuesBy(

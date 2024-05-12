@@ -19,12 +19,12 @@ internal class ReportServiceJooq {
         val nanoTime = System.nanoTime()
         val sumsByMonthAndCategory = queryExecutor.getSumsByMonthAndCategory(start, end)
 
-        LOGGER.log(Level.INFO, "fetching ${sumsByMonthAndCategory?.size} category sums took {}", DurationProvider.formatDurationSince(nanoTime))
+        LOGGER.log(Level.INFO, "fetching ${sumsByMonthAndCategory.size} category sums took {}", DurationProvider.formatDurationSince(nanoTime))
 
         val reportModelBuilder = CategoryReportModelBuilder()
 
-        val nanoTime1 = System.nanoTime()
-        for (currentRecord in sumsByMonthAndCategory!!) {
+        val secondNanoTime = System.nanoTime()
+        for (currentRecord in sumsByMonthAndCategory) {
             reportModelBuilder.putRecord(
                     currentRecord.component1(),
                     currentRecord.component2(),
@@ -35,7 +35,7 @@ internal class ReportServiceJooq {
 
         reportModelBuilder.getPeriod()
 
-        LOGGER.log(Level.INFO, "iterating ${sumsByMonthAndCategory.size} category sums took {}", DurationProvider.formatDurationSince(nanoTime))
+        LOGGER.log(Level.INFO, "iterating ${sumsByMonthAndCategory.size} category sums took {}", DurationProvider.formatDurationSince(secondNanoTime))
     }
 
     companion object {

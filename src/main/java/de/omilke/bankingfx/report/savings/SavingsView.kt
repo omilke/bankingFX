@@ -107,7 +107,7 @@ class SavingsView : FxmlView<SavingsModel> {
 
                     super.updateItem(item, empty)
 
-                    val rowItem = treeTableRow.item
+                    val rowItem = tableRow.item
                     if (!empty && item != null && item && rowItem != null) {
                         val amount = rowItem.amountProperty().get()
 

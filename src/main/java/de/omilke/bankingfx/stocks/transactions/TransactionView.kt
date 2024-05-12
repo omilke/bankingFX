@@ -22,7 +22,7 @@ import java.math.BigDecimal
 
 class TransactionView : FxmlView<TransactionModel> {
 
-    private val LOGGER: Logger = LogManager.getLogger(TransactionView.javaClass)
+    private val LOGGER: Logger = LogManager.getLogger(TransactionView::class.java)
 
     private val sr = PersistenceServiceProvider.persistenceService.securityRepository
 
