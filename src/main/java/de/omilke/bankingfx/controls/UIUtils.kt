@@ -56,8 +56,6 @@ object UIUtils {
                 labeled.styleClass.add(UIConstants.NEGATIVE)
             }
 
-            println(labeled.styleClass)
-
             labeled.text = formatAmount(amount)
         }
     }
@@ -74,6 +72,7 @@ object UIUtils {
 
         //reset style in any case to prevent potentially inconsistent styles
         labeled.styleClass.removeAll(UIConstants.ALIGN_RIGHT, UIConstants.POSITIVE, UIConstants.NEGATIVE)
+
         if (empty || amount == null) {
             labeled.text = null
         } else {
