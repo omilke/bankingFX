@@ -101,10 +101,6 @@ $warn: #FF851B;
   .matching-entry {
     -fx-background-color: $positive-background;
   }
-
-  .cell {
-    -fx-text-fill: $chart-font-color;
-  }
 }
 
 .entry-difference {
