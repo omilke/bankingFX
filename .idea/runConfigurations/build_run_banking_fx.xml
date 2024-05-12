@@ -2,7 +2,7 @@
   <configuration default="false" name="build run banking-fx" type="Application" factoryName="Application">
     <option name="MAIN_CLASS_NAME" value="de.omilke.bankingfx.MainClass" />
     <module name="bankingFX" />
-    <option name="VM_PARAMETERS" value="--add-opens javafx.graphics/javafx.css=de.jensd.fx.fontawesomefx.commons" />
+    <option name="VM_PARAMETERS" value="--add-opens javafx.graphics/javafx.css=de.jensd.fx.fontawesomefx.commons -XX:+EnableDynamicAgentLoading" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/target" />
     <method v="2">
       <option name="Make" enabled="true" />
