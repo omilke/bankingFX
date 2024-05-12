@@ -106,6 +106,7 @@ class JHaushaltParser : EntryParser {
 
         return when {
             //exception for special entry
+            //TODO: better fix this is data, not in import
             category.equals("dk 2010", true) -> false
             //check comment
             StringUtils.containsIgnoreCase(comment, "Entnahme") -> true
