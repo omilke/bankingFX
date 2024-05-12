@@ -127,7 +127,7 @@ class EntrylistView : FxmlView<EntrylistModel> {
 
                         //TODO maybe this could be solved via RowFactory + CSS
                         // but that depends on the possibilities to really style the content with glyph font
-                        //however, there should be an example with the search-bar styling
+                        // however, there should be an example with the search-bar styling
                         when (item.sequence) {
                             EntrySequence.FIRST -> getIcon(FontAwesomeIcon.CHEVRON_CIRCLE_UP)
                             EntrySequence.LAST -> getIcon(FontAwesomeIcon.CHEVRON_CIRCLE_DOWN)
@@ -215,7 +215,7 @@ class EntrylistView : FxmlView<EntrylistModel> {
 
         return when {
             filterExpression == null || filterExpression.isEmpty() -> true
-            else -> entryTableRow.getComment().equals(filterExpression, true) || entryTableRow.getCategory().equals(filterExpression, true)
+            else -> entryTableRow.getComment().contains(filterExpression, true) || entryTableRow.getCategory().contains(filterExpression, true)
         }
     }
 
