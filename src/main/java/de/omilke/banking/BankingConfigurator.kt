@@ -6,6 +6,8 @@ import java.io.File
 import java.io.FileInputStream
 import java.io.IOException
 import java.net.URISyntaxException
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -14,6 +16,7 @@ object BankingConfigurator {
     private val LOGGER = LogManager.getLogger(BankingConfigurator::class.java)
 
     private const val PROPERTIES_FILE_CONFIG_KEY = "bankingfx.config"
+    private const val PROPERTIES_PATH_CONFIG_KEY = "bankingfx.configPath"
     private const val PROPERTIES_DEFAULT_FILENAME = "bankingfx.properties"
 
     private val properties = loadConfigurationFrom()
@@ -48,11 +51,20 @@ object BankingConfigurator {
 
     private fun getConfigurationFile(): File {
 
-        val propertiesFileConfiguration = readSystemStringProperty(PROPERTIES_FILE_CONFIG_KEY)
+        var propertyFilePath = readSystemStringProperty(PROPERTIES_FILE_CONFIG_KEY)
+        if (!propertyFilePath.isPresent) {
+            //in case property is not set in system-config, try another layer of indirection
+            val propertyPathConfigFile = readSystemStringProperty(PROPERTIES_PATH_CONFIG_KEY)
+            if (propertyPathConfigFile.isPresent) {
+                LOGGER.log(Level.INFO, "Reading property file path: {} ", propertyPathConfigFile.get())
 
-        return if (propertiesFileConfiguration.isPresent) {
+                propertyFilePath = Optional.of(Files.readString(Path.of(propertyPathConfigFile.get())))
+            }
+        }
+
+        return if (propertyFilePath.isPresent) {
             //use value of system property if specified
-            File(propertiesFileConfiguration.get())
+            File(propertyFilePath.get())
         } else {
             //use default if no value is specified
             File(getDefaultConfigurationDirectory(), PROPERTIES_DEFAULT_FILENAME)
