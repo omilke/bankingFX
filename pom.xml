@@ -13,12 +13,12 @@
 
     <properties>
         <mainClass>de.omilke.bankingfx.MainClass</mainClass>
-        <java.version>21</java.version>
-        <javafx.version>22.0.1</javafx.version>
-        <kotlin.version>1.9.24</kotlin.version>
-        <kotlin.languageVersion>1.9</kotlin.languageVersion>
-        <kotlin.apiVersion>1.9</kotlin.apiVersion>
-        <kotlin.jvmTarget>21</kotlin.jvmTarget>
+        <java.version>25</java.version>
+        <javafx.version>25.0.2</javafx.version>
+        <kotlin.version>2.3.0</kotlin.version>
+        <kotlin.languageVersion>2.3</kotlin.languageVersion>
+        <kotlin.apiVersion>2.3</kotlin.apiVersion>
+        <kotlin.jvmTarget>25</kotlin.jvmTarget>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit-version>5.7.1</junit-version>
         <jooq.version>3.14.7</jooq.version>
@@ -381,12 +381,12 @@
 
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
+                <version>3.5.4</version>
                 <dependencies>
                     <dependency>
                         <groupId>org.ow2.asm</groupId>
                         <artifactId>asm</artifactId>
-                        <version>9.7</version>
+                        <version>9.9.1</version>
                     </dependency>
                 </dependencies>
             </plugin>
@@ -473,8 +473,9 @@
 
     <repositories>
         <repository>
-            <id>jcenter</id>
-            <url>https://jcenter.bintray.com/</url>
+            <id>liferay-public</id>
+            <name>Liferay Public Repository</name>
+            <url>https://repository.liferay.com/nexus/content/groups/public/</url>
         </repository>
     </repositories>
 
