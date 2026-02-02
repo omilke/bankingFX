@@ -6,6 +6,7 @@
 .idea/*
 !.idea/runConfigurations/
 bankingFX.iml
+config
 
 #build
 /target/
