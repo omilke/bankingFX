@@ -78,7 +78,7 @@ class EntrylistPopover(private val first: YearMonth, private val last: YearMonth
         fxmlLoader.setController(this)
 
         try {
-            fxmlLoader.load<Nothing>()
+            fxmlLoader.load<VBox>()
         } catch (exception: IOException) {
             throw RuntimeException(exception)
         }

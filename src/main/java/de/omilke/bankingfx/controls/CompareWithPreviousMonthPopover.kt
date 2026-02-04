@@ -120,7 +120,7 @@ class CompareWithPreviousMonthPopover(month: YearMonth, category: String?) : Pop
         fxmlLoader.setController(this)
 
         try {
-            fxmlLoader.load<Nothing>()
+            fxmlLoader.load<VBox>()
         } catch (exception: IOException) {
             throw RuntimeException(exception)
         }
