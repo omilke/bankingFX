@@ -7,14 +7,14 @@ CREATE TABLE ENTRY
     id         BIGINT NOT NULL auto_increment primary key,
     amount     NUMERIC(12, 2),
     entryDate  DATE,
-    comment    VARCHAR_IGNORECASE,
-    category   VARCHAR_IGNORECASE,
+    comment    VARCHAR,
+    category   VARCHAR,
     saving     BOOLEAN,
     sequence   INTEGER,
     orderIndex INTEGER,
-    year       INTEGER,
-    month      INTEGER,
-    day        INTEGER
+    entryYear  INTEGER,
+    entryMonth INTEGER,
+    entryDay   INTEGER
 );
 
 CREATE INDEX IDX_ENTRY_DATE ON ENTRY (entryDate);
@@ -27,8 +27,8 @@ CREATE TABLE RECURRING_ENTRY
     amount             NUMERIC(12, 2),
     startOfRecurrence  DATE,
     lastRecurrence     DATE,
-    comment            VARCHAR_IGNORECASE,
-    category           VARCHAR_IGNORECASE,
+    comment            VARCHAR,
+    category           VARCHAR,
     saving             BOOLEAN,
     sequence           INTEGER,
     orderIndex         INTEGER,

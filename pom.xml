@@ -21,7 +21,8 @@
         <kotlin.jvmTarget>25</kotlin.jvmTarget>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <junit-version>5.7.1</junit-version>
-        <jooq.version>3.14.7</jooq.version>
+        <jooq.version>3.20.11</jooq.version>
+        <h2.version>2.4.240</h2.version>
     </properties>
 
     <dependencyManagement>
@@ -256,7 +257,7 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <version>1.4.200</version>
+            <version>${h2.version}</version>
         </dependency>
 
         <!-- test libs -->
@@ -460,7 +461,7 @@
                         <!-- Manage the plugin's dependency in order to enable jdbc connection -->
                         <groupId>com.h2database</groupId>
                         <artifactId>h2</artifactId>
-                        <version>1.4.200</version>
+                        <version>${h2.version}</version>
                     </dependency>
                 </dependencies>
                 <configuration>

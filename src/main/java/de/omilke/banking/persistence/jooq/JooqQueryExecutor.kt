@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager
 import org.jooq.Condition
 import org.jooq.Record5
 import org.jooq.Result
+import org.jooq.impl.DSL
 import org.jooq.impl.DSL.*
 import java.math.BigDecimal
 import java.time.LocalDate
@@ -35,9 +36,9 @@ class JooqQueryExecutor(private val jooqContext: JooqContext) {
                         ENTRY.SAVING,
                         ENTRY.SEQUENCE,
                         ENTRY.ORDERINDEX,
-                        ENTRY.YEAR,
-                        ENTRY.MONTH,
-                        ENTRY.DAY)
+                        ENTRY.ENTRYYEAR,
+                        ENTRY.ENTRYMONTH,
+                        ENTRY.ENTRYDAY)
                 .values(
                         entry.amount,
                         entry.entryDate,
@@ -87,13 +88,12 @@ class JooqQueryExecutor(private val jooqContext: JooqContext) {
                 .selectFrom(ENTRY)
                 .where(buildWhereCondition(lowerBound, upperBound, category))
                 .orderBy(
-                        ENTRY.YEAR.desc(),
-                        ENTRY.MONTH.desc(),
+                        ENTRY.ENTRYYEAR.desc(),
+                        ENTRY.ENTRYMONTH.desc(),
                         ENTRY.SEQUENCE,
                         ENTRY.ORDERINDEX,
-                        ENTRY.DAY,
+                        ENTRY.ENTRYDAY,
                         ENTRY.AMOUNT)
-
                 .fetch()
                 .map(EntryMapper)
     }
@@ -121,10 +121,10 @@ class JooqQueryExecutor(private val jooqContext: JooqContext) {
 
         return jooqContext.context
                 //sum by period and category
-                .select(ENTRY.CATEGORY, ENTRY.YEAR, ENTRY.MONTH, sum(ENTRY.AMOUNT), inline("A").`as`("RECORDTYPE"))
+                .select(ENTRY.CATEGORY, ENTRY.ENTRYYEAR, ENTRY.ENTRYMONTH, sum(ENTRY.AMOUNT), inline("A").`as`("RECORDTYPE"))
                 .from(ENTRY)
                 .where(whereCondition)
-                .groupBy(ENTRY.YEAR, ENTRY.MONTH, ENTRY.CATEGORY)
+                .groupBy(ENTRY.ENTRYYEAR, ENTRY.ENTRYMONTH, ENTRY.CATEGORY)
                 .union(
                         //sum by category over time
                         select(ENTRY.CATEGORY, inline(null as Int?), inline(null as Int?), sum(ENTRY.AMOUNT), inline("B").`as`("RECORDTYPE"))
@@ -133,16 +133,16 @@ class JooqQueryExecutor(private val jooqContext: JooqContext) {
                                 .groupBy(ENTRY.CATEGORY))
                 .union(
                         //sum by period over all categories
-                        select(inline(null as String?), ENTRY.YEAR, ENTRY.MONTH, sum(ENTRY.AMOUNT), inline("C").`as`("RECORDTYPE"))
+                        select(inline(null as String?), ENTRY.ENTRYYEAR, ENTRY.ENTRYMONTH, sum(ENTRY.AMOUNT), inline("C").`as`("RECORDTYPE"))
                                 .from(ENTRY)
                                 .where(whereCondition)
-                                .groupBy(ENTRY.YEAR, ENTRY.MONTH))
+                                .groupBy(ENTRY.ENTRYYEAR, ENTRY.ENTRYMONTH))
                 .union(
                         //sum over all periods and categories
                         select(inline(null as String?), inline(null as Int?), inline(null as Int?), sum(ENTRY.AMOUNT), inline("D").`as`("RECORDTYPE"))
                                 .from(ENTRY)
                                 .where(whereCondition))
-                .orderBy(field(ENTRY.YEAR).asc().nullsLast(), field(ENTRY.MONTH).asc().nullsLast(), field("RECORDTYPE"), field(ENTRY.CATEGORY).asc().nullsLast())
+                .orderBy(ENTRY.ENTRYYEAR.asc().nullsLast(), ENTRY.ENTRYMONTH.asc().nullsLast(), DSL.field("RECORDTYPE"), ENTRY.CATEGORY.asc().nullsLast())
                 .fetch()
     }
 
