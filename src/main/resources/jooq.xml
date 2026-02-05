@@ -4,7 +4,7 @@
     <!--   taken from  https://www.jooq.org/doc/3.6/manual/code-generation/codegen-configuration/-->
     <jdbc>
         <driver>org.h2.Driver</driver>
-        <url>jdbc:h2:./target/bankingfx.h2</url>
+        <url>jdbc:h2:./target/test.bankingfx.h2</url>
         <user>user</user>
         <password>password</password>
     </jdbc>
