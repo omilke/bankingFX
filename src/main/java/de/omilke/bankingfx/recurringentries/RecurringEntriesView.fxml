@@ -13,7 +13,7 @@
                 <children>
                     <FontAwesomeIconView styleClass="filter-icon"/>
                     <DatePicker fx:id="fromDate"/>
-                    <DatePicker fx:id="toDate" disable="true"/>
+                    <DatePicker fx:id="toDate" />
                     <Button fx:id="generateButton" onAction="#regenerate" text="re-generate">
                         <graphic>
                             <FontAwesomeIconView glyphName="REFRESH" size="15"/>

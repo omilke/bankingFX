@@ -313,6 +313,8 @@ class RecurringEntriesView : FxmlView<RecurringEntriesModel> {
             entryTable.items.addAll(recurringEntry.generateRecurrenceFor(fromDate.value, toDate.value, regenerate))
         }
 
+        entryTable.items.sort()
+
         // TODO fix workaround?
         //workaround absent property binding in order to enable updating last recurrence date after generation
         //essentially correlates with how add JavaFX properties to (DDD) entities (esp. when using kotlin data classes, which are sealed)

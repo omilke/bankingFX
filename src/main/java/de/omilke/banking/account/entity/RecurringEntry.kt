@@ -41,7 +41,7 @@ data class RecurringEntry(
             }
 
             //continue to generate and check whether the new recurrence still matches the requested period
-            recurrence = this.recurrenceStrategy.calculateNextRecurrence(recurrence)
+            recurrence = recurrenceStrategy.calculateNextRecurrence(recurrence)
         }
 
         return generatedEntries
