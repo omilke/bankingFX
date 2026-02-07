@@ -4,8 +4,9 @@
 <?import javafx.scene.chart.CategoryAxis?>
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.layout.VBox?>
-<VBox alignment="CENTER" spacing="5.0" xmlns="http://javafx.com/javafx/10.0.2-internal"
-      xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.omilke.bankingfx.report.fortunehistory.FortunehistoryView">
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      alignment="CENTER" spacing="5.0"
+      fx:controller="de.omilke.bankingfx.report.fortunehistory.FortunehistoryView">
     <children>
         <AreaChart fx:id="fortuneChart" legendVisible="false" title="Fortune History">
             <xAxis>

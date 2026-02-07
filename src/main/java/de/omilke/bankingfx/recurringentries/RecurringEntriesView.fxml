@@ -3,8 +3,8 @@
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<AnchorPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/10.0.2-internal"
-            xmlns:fx="http://javafx.com/fxml/1"
+<AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            prefHeight="800.0" prefWidth="1200.0"
             fx:controller="de.omilke.bankingfx.recurringentries.RecurringEntriesView">
     <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
           AnchorPane.topAnchor="0.0">
@@ -13,7 +13,7 @@
                 <children>
                     <FontAwesomeIconView styleClass="filter-icon"/>
                     <DatePicker fx:id="fromDate"/>
-                    <DatePicker fx:id="toDate" />
+                    <DatePicker fx:id="toDate"/>
                     <Button fx:id="generateButton" onAction="#regenerate" text="re-generate">
                         <graphic>
                             <FontAwesomeIconView glyphName="REFRESH" size="15"/>

@@ -2,8 +2,9 @@
 
 <?import javafx.scene.chart.*?>
 <?import javafx.scene.layout.VBox?>
-<VBox alignment="CENTER" spacing="5.0" xmlns="http://javafx.com/javafx/10.0.2-internal"
-      xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.omilke.bankingfx.report.balance.BalanceView">
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      alignment="CENTER" spacing="5.0"
+      fx:controller="de.omilke.bankingfx.report.balance.BalanceView">
     <children>
         <BarChart fx:id="fortuneChart" legendVisible="false" title="Fortune">
             <xAxis>

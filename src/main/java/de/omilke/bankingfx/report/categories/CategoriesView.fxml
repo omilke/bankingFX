@@ -3,8 +3,9 @@
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<AnchorPane prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/10.0.2-internal"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.omilke.bankingfx.report.categories.CategoriesView">
+<AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            prefHeight="500.0" prefWidth="800.0"
+            fx:controller="de.omilke.bankingfx.report.categories.CategoriesView">
     <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
           AnchorPane.topAnchor="0.0">
 
@@ -16,7 +17,7 @@
                 <ChoiceBox fx:id="selectedCategories"/>
             </children>
         </HBox>
-        <ProgressBar fx:id="progressBar" maxWidth="Infinity" progress="0.0"/>
+        <ProgressBar fx:id="progressBar" maxWidth="Infinity" progress="0.0" VBox.vgrow="NEVER"/>
         <TableView fx:id="categoryTable" VBox.vgrow="ALWAYS"/>
     </VBox>
 </AnchorPane>

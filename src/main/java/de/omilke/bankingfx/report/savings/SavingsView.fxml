@@ -5,7 +5,7 @@
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.TreeTableView?>
 <?import javafx.scene.layout.*?>
-<AnchorPane xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1"
+<AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
             fx:controller="de.omilke.bankingfx.report.savings.SavingsView">
     <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
           AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -17,6 +17,6 @@
             <DatePicker visible="false"/>
         </HBox>
         <TreeTableView fx:id="savingsTable" showRoot="false" tableMenuButtonVisible="true"
-            VBox.vgrow="ALWAYS"/>
+                       VBox.vgrow="ALWAYS"/>
     </VBox>
 </AnchorPane>
