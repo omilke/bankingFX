@@ -141,6 +141,10 @@ class EntryTableRow {
         return comment
     }
 
+    override fun toString(): String {
+        return "EntryTableRow(description=$description, entryDate=$entryDate, amount=$amount, category=$category, comment=$comment)"
+    }
+
     private inner class DateChangeListener : ChangeListener<LocalDate?> {
 
         override fun changed(observable: ObservableValue<out LocalDate?>, oldValue: LocalDate?, newValue: LocalDate?) {

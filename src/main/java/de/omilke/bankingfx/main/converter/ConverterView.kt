@@ -12,6 +12,7 @@ import de.omilke.bankingfx.UIConstants
 import de.omilke.bankingfx.controls.AmountEditingCell
 import de.omilke.bankingfx.controls.DateEditingCell
 import de.omilke.bankingfx.controls.DefaultFileChooser
+import de.omilke.bankingfx.controls.EditableCategoryCell
 import de.omilke.bankingfx.controls.SavingEditingCell
 import de.omilke.bankingfx.controls.UIUtils.getIcon
 import de.omilke.bankingfx.main.entrylist.model.EntryOrder
@@ -211,8 +212,8 @@ class ConverterView : FxmlView<ConverterModel> {
         categoryColumn.prefWidth = UIConstants.CATEGORY_WIDTH
         categoryColumn.styleClass.add(UIConstants.ALIGN_LEFT)
         categoryColumn.setCellValueFactory { param -> param.value.categoryProperty() }
-        categoryColumn.cellFactory = ComboBoxTableCell.forTableColumn(FXCollections.observableList(categories))
-        categoryColumn.setOnEditCommit { e: TableColumn.CellEditEvent<EntryTableRow, String> -> e.tableView.items[e.tablePosition.row]!!.setCategory(e.newValue) }
+        categoryColumn.setCellFactory  { EditableCategoryCell(FXCollections.observableList(categories)) }
+        categoryColumn.setOnEditCommit { e: TableColumn.CellEditEvent<EntryTableRow, String> -> e.tableView.items[e.tablePosition.row]!!.setCategory(e.newValue?: "") }
 
         val commentColumn = TableColumn<EntryTableRow, String>("Comment")
         commentColumn.prefWidth = UIConstants.COMMENT_IMPORT_WIDTH
@@ -225,6 +226,7 @@ class ConverterView : FxmlView<ConverterModel> {
         buttonBarCell.prefWidth = UIConstants.ACTION_IMPORT_WIDTH
         buttonBarCell.styleClass.add(UIConstants.ALIGN_CENTER)
         buttonBarCell.isSortable = false
+        buttonBarCell.isEditable = false
 
         // define a simple boolean cell value for the action column so that the column will only be shown for non-empty rows.
         buttonBarCell.setCellValueFactory { SimpleBooleanProperty(it.value != null) }
@@ -240,6 +242,7 @@ class ConverterView : FxmlView<ConverterModel> {
         entryTable.columns.add(categoryColumn)
         entryTable.columns.add(commentColumn)
         entryTable.columns.add(buttonBarCell)
+        entryTable.isEditable = true
     }
 
     private fun createContextMenu(eventHandler: EventHandler<ActionEvent>): ContextMenu {

@@ -8,8 +8,7 @@ import java.time.format.DateTimeFormatter
 
 class DateEditingCell<P>(private val formatter: DateTimeFormatter) : TableCell<P, LocalDate?>() {
 
-    //TODO: why lazily constructed?
-    private var datePicker: DatePicker? = null
+    private var datePicker: DatePicker = DatePicker()
 
     override fun startEdit() {
 
@@ -19,7 +18,7 @@ class DateEditingCell<P>(private val formatter: DateTimeFormatter) : TableCell<P
 
             displayEditControl(item)
 
-            datePicker!!.show()
+            datePicker.show()
         }
     }
 
@@ -54,9 +53,7 @@ class DateEditingCell<P>(private val formatter: DateTimeFormatter) : TableCell<P
 
     private fun displayEditControl(item: LocalDate?) {
 
-        datePicker?.let {
-            it.value = item
-        }
+        datePicker.value = item
 
         text = null
         graphic = datePicker
