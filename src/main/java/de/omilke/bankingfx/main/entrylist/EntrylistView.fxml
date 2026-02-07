@@ -25,6 +25,8 @@
                     <FontAwesomeIconView glyphName="CLOSE" size="15"/>
                 </graphic>
             </Button>
+            <Button fx:id="collapseIncrease" styleClass="range-button"/>
+            <Button fx:id="collapseDecrease" styleClass="range-button"/>
         </HBox>
         <TreeTableView fx:id="entryTable" minWidth="-Infinity" showRoot="false" tableMenuButtonVisible="true"
                        VBox.vgrow="ALWAYS"/>

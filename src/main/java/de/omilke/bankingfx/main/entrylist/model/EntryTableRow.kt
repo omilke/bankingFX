@@ -37,7 +37,15 @@ class EntryTableRow {
      * Provides a table row in order to display an entry.
      */
     constructor(entry: Entry) :
-            this(entry.entryDate, entry.buildEntryOrder(), entry.amount, entry.isSaving, entry.category, entry.comment, false)
+            this(
+                entry.entryDate,
+                entry.buildEntryOrder(),
+                entry.amount,
+                entry.isSaving,
+                entry.category,
+                entry.comment,
+                false
+            )
 
     /**
      * Provides a table row for use as root row.
@@ -45,8 +53,15 @@ class EntryTableRow {
     constructor() :
             this(LocalDate.MAX, null, null, null, null, null, true)
 
-    constructor(entryDate: LocalDate, entryOrder: EntryOrder?, amount: BigDecimal?, saving: Boolean?, category: String?, comment: String?,
-                groupElement: Boolean) {
+    constructor(
+        entryDate: LocalDate,
+        entryOrder: EntryOrder?,
+        amount: BigDecimal?,
+        saving: Boolean?,
+        category: String?,
+        comment: String?,
+        groupElement: Boolean
+    ) {
 
         val description = when {
             groupElement -> entryDate.format(UIConstants.MONTH_NAME_FORMATTER)
@@ -139,6 +154,12 @@ class EntryTableRow {
 
     fun commentProperty(): StringProperty {
         return comment
+    }
+
+    override fun toString(): String {
+
+        return if (isGroupElement) "[$description]"
+        else "entryDate=$entryDate, amount=$amount, category=$category, comment=$comment"
     }
 
     private inner class DateChangeListener : ChangeListener<LocalDate?> {

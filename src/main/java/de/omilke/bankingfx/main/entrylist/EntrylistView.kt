@@ -12,14 +12,17 @@ import de.omilke.bankingfx.controls.extensions.atStartOfMonth
 import de.omilke.bankingfx.main.entrylist.model.EntryOrder
 import de.omilke.bankingfx.main.entrylist.model.EntryTableRow
 import de.saxsys.mvvmfx.FxmlView
+import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.scene.control.*
 import javafx.scene.input.KeyCode
 import javafx.scene.input.KeyEvent
+import javafx.scene.input.MouseEvent
+import javafx.scene.input.MouseEvent.MOUSE_CLICKED
 import javafx.scene.paint.Color
 import java.math.BigDecimal
 import java.time.LocalDate
-import java.util.*
+
 
 class EntrylistView : FxmlView<EntrylistModel> {
 
@@ -29,12 +32,21 @@ class EntrylistView : FxmlView<EntrylistModel> {
     lateinit var filter: TextField
 
     @FXML
+    lateinit var collapseIncrease: Button
+
+    @FXML
+    lateinit var collapseDecrease: Button
+
+
+    @FXML
     lateinit var entryTable: TreeTableView<EntryTableRow>
 
     @FXML
     lateinit var entryCountLabel: Label
 
     private var entries: List<EntryTableRow> = ArrayList()
+
+    private var expandedItem = 0
 
     fun initialize() {
 
@@ -45,13 +57,26 @@ class EntrylistView : FxmlView<EntrylistModel> {
 
         setColumns()
         refreshEntries()
+
+        entryTable.sceneProperty().addListener { _, _, scene ->
+            if (scene != null) {
+                scene.onKeyPressed = updateOnShift()
+                scene.onKeyReleased = updateOnShift()
+            }
+        }
+
+        collapseIncrease.text = "+▼"
+        collapseIncrease.addEventHandler(MOUSE_CLICKED, ::increaseCollapse)
+
+        collapseDecrease.text = "-▼"
+        collapseDecrease.addEventHandler(MOUSE_CLICKED, ::decreaseCollapse)
     }
 
     private fun refreshEntries() {
 
         entries = er
-                .findAllEntries()
-                .map(::EntryTableRow)
+            .findAllEntries()
+            .map(::EntryTableRow)
 
         fillTable(entries)
     }
@@ -60,28 +85,43 @@ class EntrylistView : FxmlView<EntrylistModel> {
 
         entryTable.root.children.clear()
 
-        var previous: LocalDate? = null
+        var previousGroup: LocalDate? = null
         var currentRoot = TreeItem<EntryTableRow>()
 
-        var expandedMonths = 0
         for (entry in entries) {
-            val key = entry.getEntryDate().atStartOfMonth()
-            if (key != previous) {
-                currentRoot = TreeItem(EntryTableRow(key))
-
-                val expanded: Boolean = when {
-                    isInFutureMonth(key) -> false // keep future month collapsed...
-                    else -> expandedMonths++ <= MONTH_TO_EXPAND // ... but only expand so many month
-                }
-
-                currentRoot.isExpanded = expanded
+            val currentGroup = entry.getEntryDate().atStartOfMonth()
+            if (currentGroup != previousGroup) {
+                //memorize to tree-item-root to add items to
+                currentRoot = TreeItem(EntryTableRow(currentGroup))
                 entryTable.root.children.add(currentRoot)
-                previous = key
+
+                previousGroup = currentGroup
             }
 
             currentRoot.children.add(TreeItem(entry))
         }
-        entryCountLabel.text = entries.size.toString() + ""
+
+        expandedItem = 0
+        uncollapseRows()
+
+        entryCountLabel.text = "${entries.size}"
+    }
+
+    private fun uncollapseRows() {
+
+        var expanded = 0
+        for (item in entryTable.root.children) {
+
+            if (isInFutureMonth(item.value.getEntryDate()))
+                item.isExpanded = false
+            else
+                if (expanded >= MONTH_TO_EXPAND + expandedItem)
+                    item.isExpanded = false
+                else {
+                    item.isExpanded = true
+                    expanded++
+                }
+        }
     }
 
     fun isInFutureMonth(key: LocalDate): Boolean {
@@ -189,7 +229,8 @@ class EntrylistView : FxmlView<EntrylistModel> {
     @FXML
     fun filter() {
 
-        fillTable(entries
+        fillTable(
+            entries
                 .filter(this::matchFilter)
         )
     }
@@ -215,7 +256,39 @@ class EntrylistView : FxmlView<EntrylistModel> {
 
         return when {
             filterExpression == null || filterExpression.isEmpty() -> true
-            else -> entryTableRow.getComment().contains(filterExpression, true) || entryTableRow.getCategory().contains(filterExpression, true)
+            else -> entryTableRow.getComment().contains(filterExpression, true) || entryTableRow.getCategory()
+                .contains(filterExpression, true)
+        }
+    }
+
+    fun increaseCollapse(event: MouseEvent) {
+
+        this.expandedItem +=
+            if (event.isAltDown) 12
+            else 1
+
+        uncollapseRows()
+    }
+
+    fun decreaseCollapse(event: MouseEvent) {
+
+        this.expandedItem -=
+            if (event.isAltDown) 12
+            else 1
+
+        expandedItem = expandedItem.coerceAtLeast(0)
+
+        uncollapseRows()
+    }
+
+    private fun updateOnShift(): EventHandler<KeyEvent?> = EventHandler { keyEvent: KeyEvent ->
+
+        if (keyEvent.isAltDown) {
+            collapseIncrease.text = "+▼▼"
+            collapseDecrease.text = "-▼▼"
+        } else {
+            collapseIncrease.text = "+▼ "
+            collapseDecrease.text = "-▼ "
         }
     }
 
