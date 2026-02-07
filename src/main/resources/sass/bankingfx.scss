@@ -51,6 +51,10 @@ $warn: #FF851B;
   -glyph-name: FILTER;
 }
 
+.range-button {
+    -fx-pref-width: 50px;
+}
+
 .bottom-status-bar {
   -fx-spacing: 10px;
   -fx-alignment: center;

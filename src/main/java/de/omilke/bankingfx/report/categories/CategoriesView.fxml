@@ -3,6 +3,7 @@
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+
 <AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
             prefHeight="500.0" prefWidth="800.0"
             fx:controller="de.omilke.bankingfx.report.categories.CategoriesView">
@@ -10,12 +11,12 @@
           AnchorPane.topAnchor="0.0">
 
         <HBox styleClass="top-control-bar">
-            <children>
-                <FontAwesomeIconView styleClass="filter-icon"/>
-                <DatePicker fx:id="fromDate"/>
-                <DatePicker fx:id="toDate"/>
-                <ChoiceBox fx:id="selectedCategories"/>
-            </children>
+            <FontAwesomeIconView styleClass="filter-icon"/>
+            <Button fx:id="fromDecrease" text="&lt;" styleClass="range-button"/>
+            <DatePicker fx:id="fromDate"/>
+            <Button fx:id="fromIncrease" text="&gt;" styleClass="range-button"/>
+            <DatePicker fx:id="toDate"/>
+            <ChoiceBox fx:id="selectedCategories"/>
         </HBox>
         <ProgressBar fx:id="progressBar" maxWidth="Infinity" progress="0.0" VBox.vgrow="NEVER"/>
         <TableView fx:id="categoryTable" VBox.vgrow="ALWAYS"/>

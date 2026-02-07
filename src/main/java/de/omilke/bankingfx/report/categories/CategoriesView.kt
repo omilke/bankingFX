@@ -11,8 +11,12 @@ import de.omilke.bankingfx.service.BackgroundProcessAndUpdateUI
 import de.omilke.util.DurationProvider
 import de.saxsys.mvvmfx.FxmlView
 import javafx.beans.property.SimpleObjectProperty
+import javafx.event.EventHandler
 import javafx.fxml.FXML
 import javafx.scene.control.*
+import javafx.scene.input.KeyEvent
+import javafx.scene.input.MouseEvent
+import javafx.scene.input.MouseEvent.MOUSE_CLICKED
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.LogManager
 import java.math.BigDecimal
@@ -30,6 +34,12 @@ class CategoriesView : FxmlView<CategoriesModel> {
 
     @FXML
     private lateinit var toDate: DatePicker
+
+    @FXML
+    private lateinit var fromDecrease: Button
+
+    @FXML
+    private lateinit var fromIncrease: Button
 
     @FXML
     private lateinit var selectedCategories: ChoiceBox<String>
@@ -54,6 +64,16 @@ class CategoriesView : FxmlView<CategoriesModel> {
 
         selectedCategories.converter = CategoryConverter()
         selectedCategories.valueProperty().addListener { _, _, _ -> updateTableModel() }
+
+        categoryTable.sceneProperty().addListener { _, _, scene ->
+            if (scene != null) {
+                scene.onKeyPressed = updateOnShift()
+                scene.onKeyReleased = updateOnShift()
+            }
+        }
+
+        fromDecrease.addEventHandler(MOUSE_CLICKED, ::decreaseFromDate)
+        fromIncrease.addEventHandler(MOUSE_CLICKED, ::increaseFromDate)
     }
 
     private fun fillTableFromDefaultSetting() {
@@ -79,6 +99,43 @@ class CategoriesView : FxmlView<CategoriesModel> {
 
         LOGGER.log(Level.INFO, "Leaving show() after {}", DurationProvider.formatDurationSince(nanoTime))
     }
+
+    private fun updateOnShift(): EventHandler<KeyEvent?> = EventHandler { keyEvent: KeyEvent ->
+
+        if (keyEvent.isAltDown) {
+            fromDecrease.text = "<<"
+            fromIncrease.text = ">>"
+        } else {
+            fromDecrease.text = "<"
+            fromIncrease.text = ">"
+        }
+    }
+
+    fun decreaseFromDate(event: MouseEvent) {
+
+        val currentDate = fromDate.value
+
+        fromDate.value =
+            if (currentDate == null)
+                LocalDate.now().atStartOfMonth().minusYears(1)
+            else
+                if (event.isAltDown) currentDate.minusYears(1)
+                else currentDate.minusMonths(1)
+    }
+
+
+    fun increaseFromDate(event: MouseEvent) {
+
+        val currentValue = fromDate.value
+
+        fromDate.value =
+            if (currentValue == null)
+                LocalDate.now().atStartOfMonth().minusYears(1)
+            else
+                if (event.isAltDown) currentValue.plusYears(1)
+                else currentValue.plusMonths(1)
+    }
+
 
     private fun updateViewRunnable(model: CategoryReportModel): Runnable {
 
@@ -112,7 +169,11 @@ class CategoriesView : FxmlView<CategoriesModel> {
 
             progressBar.progress = 0.0
 
-            LOGGER.log(Level.INFO, "Rebuilding table with category sums took {}", DurationProvider.formatDurationSince(nanoTime))
+            LOGGER.log(
+                Level.INFO,
+                "Rebuilding table with category sums took {}",
+                DurationProvider.formatDurationSince(nanoTime)
+            )
         }
 
         private fun setupHeaderColumn() {
@@ -129,7 +190,8 @@ class CategoriesView : FxmlView<CategoriesModel> {
             //add all available month column to the TableView
             for ((i, currentMonth) in columns.withIndex()) {
 
-                val monthColumn = TableColumn<CategoryOverTimeElement, BigDecimal>(currentMonth.format(UIConstants.MONTH_FORMATTER))
+                val monthColumn =
+                    TableColumn<CategoryOverTimeElement, BigDecimal>(currentMonth.format(UIConstants.MONTH_FORMATTER))
                 monthColumn.prefWidth = UIConstants.AMOUNT_WIDTH
                 monthColumn.setCellFactory { AmountContextMenuTableCell(currentMonth) }
 
