@@ -8,6 +8,7 @@ import de.omilke.bankingfx.report.categories.model.MatchingEntryPair
 import javafx.beans.property.SimpleObjectProperty
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
+import javafx.scene.Node
 import javafx.scene.control.*
 import javafx.scene.layout.Region
 import javafx.scene.layout.VBox
@@ -120,7 +121,7 @@ class CompareWithPreviousMonthPopover(month: YearMonth, category: String?) : Pop
         fxmlLoader.setController(this)
 
         try {
-            fxmlLoader.load<VBox>()
+            fxmlLoader.load<Node>()
         } catch (exception: IOException) {
             throw RuntimeException(exception)
         }

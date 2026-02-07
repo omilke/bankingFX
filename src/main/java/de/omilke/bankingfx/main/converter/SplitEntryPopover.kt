@@ -59,7 +59,7 @@ class SplitEntryPopover(
         fxmlLoader.setController(this)
 
         try {
-            fxmlLoader.load<Nothing>()
+            fxmlLoader.load<Node>()
         } catch (exception: IOException) {
             throw RuntimeException(exception)
         }

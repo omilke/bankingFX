@@ -11,6 +11,7 @@ import javafx.beans.property.SimpleBooleanProperty
 import javafx.beans.property.SimpleObjectProperty
 import javafx.fxml.FXML
 import javafx.fxml.FXMLLoader
+import javafx.scene.Node
 import javafx.scene.control.Label
 import javafx.scene.control.TableCell
 import javafx.scene.control.TableColumn
@@ -78,7 +79,7 @@ class EntrylistPopover(private val first: YearMonth, private val last: YearMonth
         fxmlLoader.setController(this)
 
         try {
-            fxmlLoader.load<VBox>()
+            fxmlLoader.load<Node>()
         } catch (exception: IOException) {
             throw RuntimeException(exception)
         }
